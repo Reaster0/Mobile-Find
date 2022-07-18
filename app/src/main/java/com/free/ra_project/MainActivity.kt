@@ -13,4 +13,8 @@ class MainActivity : AppCompatActivity() {
         mainScreenBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainScreenBinding.root)
     }
+
+    fun test() {
+        return
+    }
 }

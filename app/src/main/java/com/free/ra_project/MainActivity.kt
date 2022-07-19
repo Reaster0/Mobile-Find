@@ -66,8 +66,7 @@ class MainActivity : AppCompatActivity() {
         currentAltitude = location.altitude
         var tempLatitude = currentLatitude.toString()
         var tempLongitude = currentLongitude.toString()
-        //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.currentLocation, tempLatitude, tempLongitude)
-        mainScreenBinding.tvCurrentCoordinates.text = "Latitude $tempLatitude, Longitude $tempLongitude"
+        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, tempLatitude, tempLongitude)
         Log.d("testLog", "current latitude: $currentLatitude, current longitude: $currentLongitude, " +
                 "current altitude: $currentAltitude")
     }
@@ -103,8 +102,7 @@ class MainActivity : AppCompatActivity() {
 
             var tempSavedLatitude = savedLatitude.toString()
             var tempSavedLongitude = savedLongitude.toString()
-            mainScreenBinding.tvSavedCoordinates.text = "Latitude $tempSavedLatitude, Longitude $tempSavedLongitude"
-            //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, tempSavedLatitude, tempSavedLongitude)
+            mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, tempSavedLatitude, tempSavedLongitude)
             Log.d("testLog", "saved latitude: $savedLatitude, saved longitude: $savedLongitude, saved altitude: $savedAltitude")
         }
     }

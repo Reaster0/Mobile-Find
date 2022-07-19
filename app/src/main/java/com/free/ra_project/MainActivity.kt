@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mainScreenBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainScreenBinding.root)
+        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "lolilol", "lolilol2")
     }
 
     fun test() {

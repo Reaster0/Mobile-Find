@@ -21,7 +21,7 @@
             android:id="@+id/tvSavedCoordinates"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Latitude: 0.0\nLongitude: 0.0"
+            android:text="@string/savedLocation"
             android:textSize="24sp"
             android:layout_gravity="start"
             />
@@ -53,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="Current Coordinates\nLatitude: 0.0\nLongitude: 0.0"
+        android:text="@string/currentLocation"
         android:textSize="24sp"
         app:layout_constraintTop_toBottomOf="@id/ivDirectionArrow"
         app:layout_constraintStart_toStartOf="parent"

@@ -39,26 +39,39 @@
 
     <ImageView
         android:id="@+id/ivDirectionArrow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/llPositionInfo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="108dp"
+        android:layout_height="94dp"
         android:layout_margin="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llPositionInfo"
+        app:layout_constraintVertical_bias="0.299"
         app:srcCompat="@mipmap/arrow" />
+
+    <ImageView
+        android:id="@+id/ivCompass"
+        android:layout_width="265dp"
+        android:layout_height="297dp"
+        android:layout_marginBottom="184dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.431"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@mipmap/circle" />
 
     <TextView
         android:id="@+id/tvCurrentCoordinates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_margin="100dp"
         android:text="@string/currentLocation"
         android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@id/ivDirectionArrow"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivDirectionArrow" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

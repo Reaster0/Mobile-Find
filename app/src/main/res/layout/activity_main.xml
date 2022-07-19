@@ -27,8 +27,8 @@
             />
 
         <Button
-            android:layout_marginTop="30dp"
             android:id="@+id/btnRegisterLocation"
+            android:layout_marginTop="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Register Location"

@@ -24,22 +24,22 @@ class MainActivity : AppCompatActivity() {
     private var savedLatitude : Double = 0.0
     private var savedLongitude: Double = 0.0
     private var savedAltitude: Double = 0.0
+
     private var currentLatitude : Double = 0.0
     private var currentLongitude: Double = 0.0
     private var currentAltitude: Double = 0.0
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainScreenBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainScreenBinding.root)
-        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "lolilol", "lolilol2")
+        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest.create().apply {
             interval = 2000 //LOCATION_UPDATE_INTERVAL
             fastestInterval = 2000 //LOCATION_FASTEST_INTERVAL
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = Priority.PRIORITY_HIGH_ACCURACY
         }
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
@@ -64,8 +64,8 @@ class MainActivity : AppCompatActivity() {
         currentLatitude = location.latitude
         currentLongitude = location.longitude
         currentAltitude = location.altitude
-        var tempLatitude = currentLatitude.toString()
-        var tempLongitude = currentLongitude.toString()
+        val tempLatitude : String = currentLatitude.toString()
+        val tempLongitude : String = currentLongitude.toString()
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, tempLatitude, tempLongitude)
         Log.d("testLog", "current latitude: $currentLatitude, current longitude: $currentLongitude, " +
                 "current altitude: $currentAltitude")
@@ -89,20 +89,20 @@ class MainActivity : AppCompatActivity() {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
-        fusedLocationClient.getCurrentLocation(LocationRequest.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
             override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
             override fun isCancellationRequested() = false
         }).addOnSuccessListener {
                 location: Location? ->
             if (location != null) {
-                savedLongitude = location.latitude
-                savedLatitude = location.longitude
+                savedLatitude = location.latitude
+                savedLongitude = location.longitude
                 savedAltitude = location.altitude
             }
 
-            var tempSavedLatitude = savedLatitude.toString()
-            var tempSavedLongitude = savedLongitude.toString()
-            mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, tempSavedLatitude, tempSavedLongitude)
+            val tempLatitude = savedLatitude.toString()
+            val tempLongitude = savedLongitude.toString()
+            mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, tempLatitude, tempLongitude)
             Log.d("testLog", "saved latitude: $savedLatitude, saved longitude: $savedLongitude, saved altitude: $savedAltitude")
         }
     }

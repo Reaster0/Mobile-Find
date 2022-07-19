@@ -21,38 +21,44 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_gravity="center"
         android:orientation="vertical"
-        android:layout_gravity="center">
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tvSavedCoordinates"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/savedLocation"
-            android:textSize="24sp"
             android:layout_gravity="start"
-            />
+            android:text="@string/savedLocation"
+            android:textSize="24sp" />
 
         <Button
-            android:layout_marginTop="30dp"
             android:id="@+id/btnRegisterLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Register Location"
             android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:text="Register Location"
 
             />
     </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <ImageView
         android:id="@+id/ivDirectionArrow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/cvPositionInfo"
+        android:layout_width="108dp"
+        android:layout_height="94dp"
+        android:layout_margin="40dp"
+        android:layout_marginBottom="393dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivCompass"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ivCompass"
         app:layout_constraintVertical_bias="0.299"
         app:srcCompat="@mipmap/arrow" />
 
@@ -71,13 +77,13 @@
         android:id="@+id/tvCurrentCoordinates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="100dp"
+        android:layout_margin="10dp"
         android:text="@string/currentLocation"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivDirectionArrow" />
+        app:layout_constraintTop_toBottomOf="@+id/ivCompass" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

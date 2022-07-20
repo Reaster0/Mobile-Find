@@ -4,14 +4,17 @@ import android.graphics.Color
 import android.widget.ImageView
 import androidx.core.graphics.ColorUtils
 
-class Arrow(_image: ImageView) {
-    private var image: ImageView = _image
+open class DirectionObjects(_image: ImageView) {
+    var image: ImageView = _image
 
     fun rotate(_degree: Float) {
         if (image.rotation + _degree >= 360)
             image.rotation = (image.rotation + _degree) - 360
         image.apply { rotation += _degree }
     }
+}
+
+class Arrow(_image: ImageView) : DirectionObjects(_image) {
 
     fun colorize(_distance: Int) {
         val maxRedDistance = 100f // <- max distance far away
@@ -26,3 +29,5 @@ class Arrow(_image: ImageView) {
                 1 - ratio)) //between 0 and 1, 0 is 100% red, 1 is 100% blue
     }
 }
+
+class Compass(_image: ImageView) : DirectionObjects(_image) {}

@@ -23,7 +23,7 @@ class Arrow(_image: ImageView) : DirectionObjects(_image) {
         image.setColorFilter(
             ColorUtils.blendARGB(
                 Color.parseColor("#9C9C9C"),
-                Color.parseColor("#2196F3"),
+                Color.parseColor("#5BAAE8"),
                 1 - ratio)) //between 0 and 1, 0 is 100% red, 1 is 100% blue
     }
 }

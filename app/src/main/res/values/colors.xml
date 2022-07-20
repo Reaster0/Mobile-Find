@@ -11,7 +11,7 @@
 
     <color name="BG1">#000000</color>
     <color name="grey1">#2C2C2C</color>
-    <color name="blue1">#2196F3</color>
-
+    <color name="grey2">#9C9C9C</color>
+    <color name="blue1">#5BAAE8</color>
 
 </resources>

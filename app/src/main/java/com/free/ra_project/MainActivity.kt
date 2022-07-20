@@ -49,6 +49,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mainScreenBinding.btnRegisterLocation.setOnClickListener {
+            var lol = LocationSensor(this)
+            lol.getLocation()
             //getLocation()
             Log.d("testLog", "Button clicked")
         }

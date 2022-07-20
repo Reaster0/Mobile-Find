@@ -2,4 +2,6 @@
     <string name="app_name">RA-Project</string>
     <string name="savedLocation">Latitude: %s\nLongitude: %s</string>
     <string name="currentLocation">Current Coordinates\nLatitude: 0.0\nLongitude: 0.0</string>
+    <string name="gyroDebug">X: %s\nY: %s\n Z: %s</string>
+    <string name="angleDebug">Angle: %s</string>
 </resources>

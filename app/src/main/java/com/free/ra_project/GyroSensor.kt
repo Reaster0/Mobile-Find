@@ -2,9 +2,11 @@ package com.free.ra_project
 
 import android.content.Context
 import android.hardware.Sensor
+import android.hardware.Sensor.TYPE_ROTATION_VECTOR
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import androidx.core.content.ContextCompat.getSystemService
 
 interface GyroInterface {
@@ -15,7 +17,7 @@ interface GyroInterface {
 class GyroSensor(_interGyro: GyroInterface, _sensorManager: SensorManager) : SensorEventListener {
     private var interGyro : GyroInterface = _interGyro
     private var sensorManager: SensorManager = _sensorManager
-    private var gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    private var gyroscope = sensorManager.getDefaultSensor(TYPE_ROTATION_VECTOR)
 
 
     fun startListen(){
@@ -27,11 +29,27 @@ class GyroSensor(_interGyro: GyroInterface, _sensorManager: SensorManager) : Sen
     }
 
     override fun onSensorChanged(p0: SensorEvent?) {
-        interGyro.gyroValueUpdate(p0?.values?.get(0), p0?.values?.get(1), p0?.values?.get(2))
+        val rotationMatrix: FloatArray = FloatArray(16)
+        val remapRotationMatrix: FloatArray = FloatArray(16)
+        val orientation: FloatArray = FloatArray(3)
+        if (p0!!.sensor.type == TYPE_ROTATION_VECTOR) {
+            Log.d("reaster", p0!!.sensor.name)
+            SensorManager.getRotationMatrixFromVector(rotationMatrix, p0!!.values)
+
+            SensorManager.getOrientation(remapRotationMatrix, orientation)
+            for (i in 0..2) {
+            }
+            var angle = (Math.toDegrees(SensorManager.getOrientation(rotationMatrix, orientation)[0].toDouble() + 360) % 360).toFloat()
+            Log.d(
+                "gyro",
+                "X: ${p0?.values?.get(0)}, Y: ${p0?.values?.get(1)}, Z: ${p0?.values?.get(2)}"
+            )
+            interGyro.gyroValueUpdate(angle, orientation[1], orientation[2])
+        }
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        TODO("Not yet implemented")
+        Log.d("reaster", "onAccuracyChanged")
     }
 
 }

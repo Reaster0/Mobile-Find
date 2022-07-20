@@ -12,9 +12,9 @@ import com.free.ra_project.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity(), GyroInterface {
 
     private lateinit var mainScreenBinding : ActivityMainBinding
-    var x = 2.0f
+    var x = 0.0f
     var y = 3.0f
-    var z = x + y
+    var z = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity(), GyroInterface {
         x = _x!!
         y = _y!!
         z = _z!!
-        Log.d("test", "x : $x, y : $y, z : $z")
-        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, x.toString(), y.toString())
+        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.angleDebug, x.toString())
     }
 }

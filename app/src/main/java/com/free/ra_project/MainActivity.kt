@@ -3,10 +3,10 @@ package com.free.ra_project
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.free.ra_project.databinding.ActivityMainBinding
 import com.google.android.gms.location.*
@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest.create().apply {
-            interval = 2000 //LOCATION_UPDATE_INTERVAL
-            fastestInterval = 2000 //LOCATION_FASTEST_INTERVAL
+            interval = Constants.LOCATION_UPDATE_INTERVAL
+            fastestInterval = Constants.LOCATION_FASTEST_INTERVAL
             priority = Priority.PRIORITY_HIGH_ACCURACY
         }
         locationCallback = object : LocationCallback() {
@@ -64,11 +64,19 @@ class MainActivity : AppCompatActivity() {
         currentLatitude = location.latitude
         currentLongitude = location.longitude
         currentAltitude = location.altitude
+
+        val distance = FloatArray(1) {0F}
+        Location.distanceBetween( currentLatitude, currentLongitude,
+            savedLatitude, savedLongitude, distance)
+
+        val tempDistance : String = distance[0].toString()
         val tempLatitude : String = currentLatitude.toString()
         val tempLongitude : String = currentLongitude.toString()
+
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, tempLatitude, tempLongitude)
+        mainScreenBinding.tvDistance.text = tempDistance
         Log.d("testLog", "current latitude: $currentLatitude, current longitude: $currentLongitude, " +
-                "current altitude: $currentAltitude")
+                "current altitude: $currentAltitude, distance to saved: $tempDistance")
     }
 
     private fun getLocation(){

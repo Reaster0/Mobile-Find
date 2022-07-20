@@ -4,49 +4,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/BG1"
     tools:context=".MainActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPositionInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardElevation="40dp"
-        app:cardCornerRadius="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="20dp"
-        android:paddingTop="8dp">
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:padding="8dp"
+        android:backgroundTint="@color/BG1"
+        android:paddingTop="8dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvSavedCoordinates"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/savedLocation"
-            android:textSize="24sp" />
-
-        <Button
-            android:id="@+id/btnRegisterLocation"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:text="Register Location"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tvSavedCoordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:text="@string/savedLocation"
+                android:textColor="@color/blue1"
+                android:textSize="22sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="[ saved location ]"
+                android:textColor="@color/grey2"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnRegisterLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:backgroundTint="@color/blue1"
+                android:text="Register Location"
+                android:textColor="@color/BG1" />
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
+
 
     <ImageView
         android:id="@+id/ivCompass"
@@ -54,15 +67,17 @@
         android:layout_height="350dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/circle" />
+        app:srcCompat="@drawable/circle"
+        app:tint="@color/blue1" />
 
     <ImageView
         android:id="@+id/ivDirectionArrow"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="170dp"
         app:layout_constraintBottom_toBottomOf="@+id/ivCompass"
         app:layout_constraintTop_toTopOf="@+id/ivCompass"
-        app:srcCompat="@mipmap/arrow" />
+        app:srcCompat="@drawable/arrow"
+        app:tint="@color/blue1" />
 
     <TextView
         android:id="@+id/tvCurrentCoordinates"
@@ -70,11 +85,21 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="@string/currentLocation"
-        android:textSize="24sp"
+        android:textColor="@color/blue1"
+        android:textSize="22sp"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivCompass" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="[ current location ]"
+        android:textColor="@color/grey2"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCurrentCoordinates" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

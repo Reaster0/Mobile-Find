@@ -9,11 +9,11 @@ import android.os.Bundle
 import android.util.Log
 import com.free.ra_project.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), GyroInterface {
+class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface {
 
     private lateinit var mainScreenBinding : ActivityMainBinding
     var x = 0.0f
-    var y = 3.0f
+    var y = 0.0f
     var z = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,21 +21,21 @@ class MainActivity : AppCompatActivity(), GyroInterface {
         mainScreenBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainScreenBinding.root)
         var sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "lolilol", "lolilol2")
-
         var gyroSensor = GyroSensor(this, sensorManager)
+        var compassSensor = CompassSensor(this, sensorManager)
+        compassSensor.startListen()
         gyroSensor.startListen()
-        Log.d("test", "x : $x, y : $y, z : $z")
     }
 
-    fun test() {
-        return
-    }
-
-    override fun gyroValueUpdate(_x: Float?, _y: Float?, _z: Float?) {
-        x = _x!!
-        y = _y!!
-        z = _z!!
+    override fun gyroValueUpdate(_degree : Float) {
+        x = _degree
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.angleDebug, x.toString())
+        Utils().rotate(mainScreenBinding.ivDirectionArrow, x)
+    }
+
+    override fun compassValueUpdate(_degree : Float) {
+        y = _degree
+        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, _degree.toString())
+        Utils().rotate(mainScreenBinding.ivCompass, _degree + 180 - x)
     }
 }

@@ -10,7 +10,7 @@ import android.util.Log
 import androidx.core.content.ContextCompat.getSystemService
 
 interface GyroInterface {
-    fun gyroValueUpdate(_x: Float?, _y: Float?, _z: Float?)
+    fun gyroValueUpdate(_degree : Float)
 }
 
 
@@ -32,20 +32,10 @@ class GyroSensor(_interGyro: GyroInterface, _sensorManager: SensorManager) : Sen
         val rotationMatrix: FloatArray = FloatArray(16)
         val remapRotationMatrix: FloatArray = FloatArray(16)
         val orientation: FloatArray = FloatArray(3)
-        if (p0!!.sensor.type == TYPE_ROTATION_VECTOR) {
-            Log.d("reaster", p0!!.sensor.name)
-            SensorManager.getRotationMatrixFromVector(rotationMatrix, p0!!.values)
-
-            SensorManager.getOrientation(remapRotationMatrix, orientation)
-            for (i in 0..2) {
-            }
-            var angle = (Math.toDegrees(SensorManager.getOrientation(rotationMatrix, orientation)[0].toDouble() + 360) % 360).toFloat()
-            Log.d(
-                "gyro",
-                "X: ${p0?.values?.get(0)}, Y: ${p0?.values?.get(1)}, Z: ${p0?.values?.get(2)}"
-            )
-            interGyro.gyroValueUpdate(angle, orientation[1], orientation[2])
-        }
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, p0!!.values)
+        SensorManager.getOrientation(remapRotationMatrix, orientation)
+        var angle = (Math.toDegrees(SensorManager.getOrientation(rotationMatrix, orientation)[0].toDouble() + 360) % 360).toFloat()
+        interGyro.gyroValueUpdate(angle)
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {

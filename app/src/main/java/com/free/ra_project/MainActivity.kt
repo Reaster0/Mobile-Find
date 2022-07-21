@@ -6,6 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.free.ra_project.databinding.ActivityMainBinding
+import java.lang.Math.pow
+import kotlin.math.atan2
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, LocationInterface {
 
@@ -13,6 +17,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     var x = 0.0f
     var y = 0.0f
     var z = 0.0f
+    var currentPos : DoubleArray? = null
+    var savedPos : DoubleArray? = null
     lateinit var arrow : Arrow
     lateinit var compass : Compass
     lateinit var sensorManager : SensorManager
@@ -42,6 +48,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
 
     override fun locationValueUpdate(_latitude: Double, _longitude: Double, _altitude: Double) {
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _latitude.toString(), _longitude.toString())
+        currentPos = doubleArrayOf(_latitude, _longitude, _altitude)
     }
 
     override fun locationValueRequested(_latitude: Double, _longitude: Double, _altitude: Double) {
@@ -51,6 +58,11 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         x = _degree
         //mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.angleDebug, x.toString())
         arrow.rotate(_degree)
+//        if (currentPos != null && savedPos != null){
+//            var direction = atan2(savedPos!![1] - currentPos!![1], savedPos!![0] - currentPos!![0])
+//            var distance = sqrt((savedPos!![0] - currentPos!![0]).pow(2.0) + (savedPos!![1] - currentPos!![1]).pow(2.0))
+//        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.angleDebug, distance.toString())
+//        }
     }
 
     override fun compassValueUpdate(_degree : Float) {

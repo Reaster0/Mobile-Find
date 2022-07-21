@@ -13,8 +13,8 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
 
 interface LocationInterface{
-    fun locationValueUpdate(_latitude: Double, _longitude: Double, _altitude: Double)
-    fun locationValueRequested(_latitude: Double, _longitude: Double, _altitude: Double)
+    fun locationValueUpdate(_latitude: Double, _longitude: Double, _altitude: Double, _location : Location)
+    fun locationValueRequested(_latitude: Double, _longitude: Double, _altitude: Double, _location: Location)
 }
 
 class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatActivity) {
@@ -35,7 +35,7 @@ class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatAct
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 for (location in locationResult.locations) {
-                    interLocation.locationValueUpdate(location.latitude, location.longitude, location.altitude)
+                    interLocation.locationValueUpdate(location.latitude, location.longitude, location.altitude, location)
                     Log.d("testLog", location.toString())
                 }
             }
@@ -62,7 +62,7 @@ class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatAct
         }).addOnSuccessListener {
             location: Location? ->
                 if (location != null) {
-                    interLocation.locationValueRequested(location.latitude, location.longitude, location.altitude)
+                    interLocation.locationValueRequested(location.latitude, location.longitude, location.altitude, location)
                     Log.d("testLog", "Saved OK")
                 }
 

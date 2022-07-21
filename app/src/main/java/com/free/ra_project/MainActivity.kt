@@ -2,13 +2,14 @@ package com.free.ra_project
 
 import android.content.Context
 import android.hardware.SensorManager
-import androidx.appcompat.app.AppCompatActivity
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
-import java.lang.Math.pow
 import kotlin.math.atan2
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, LocationInterface {
@@ -19,6 +20,10 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     var z = 0.0f
     var currentPos : DoubleArray? = null
     var savedPos : DoubleArray? = null
+    var locme : Location? = null
+    var locsaved : Location? = null
+    var direction : Float? = null
+    var distance : Float? = null
     lateinit var arrow : Arrow
     lateinit var compass : Compass
     lateinit var sensorManager : SensorManager
@@ -46,29 +51,62 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
 
-    override fun locationValueUpdate(_latitude: Double, _longitude: Double, _altitude: Double) {
+    override fun locationValueUpdate(_latitude: Double, _longitude: Double, _altitude: Double, _location: Location) {
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _latitude.toString(), _longitude.toString())
         currentPos = doubleArrayOf(_latitude, _longitude, _altitude)
+        locme = _location
+        if (locme != null && locsaved != null){
+            if (direction != null) {
+               // direction = if (locme!!.bearingTo(locsaved!!) < 0)
+                    direction = locme!!.bearingTo(locsaved!!)
+//                else (locme!!.bearingTo(locsaved!!) + direction!!) / 2
+                if (distance == null)
+                    distance = locme!!.distanceTo(locsaved!!)
+                else
+                    distance = (locme!!.distanceTo(locsaved!!) + distance!!) / 2
+                arrow.colorize(distance!!.roundToInt())
+                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString())
+            }
+            else
+                direction = locme!!.bearingTo(locsaved!!)
+        }
     }
 
-    override fun locationValueRequested(_latitude: Double, _longitude: Double, _altitude: Double) {
+    override fun locationValueRequested(_latitude: Double, _longitude: Double, _altitude: Double, _location : Location) {
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _latitude.toString(), _longitude.toString())
+        savedPos = doubleArrayOf(_latitude, _longitude, _altitude)
+        locsaved = _location
     }
     override fun gyroValueUpdate(_degree : Float) {
         x = _degree
-        //mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.angleDebug, x.toString())
-        arrow.rotate(_degree)
-//        if (currentPos != null && savedPos != null){
-//            var direction = atan2(savedPos!![1] - currentPos!![1], savedPos!![0] - currentPos!![0])
-//            var distance = sqrt((savedPos!![0] - currentPos!![0]).pow(2.0) + (savedPos!![1] - currentPos!![1]).pow(2.0))
-//        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.angleDebug, distance.toString())
-//        }
+        //mainScreenBinding.tvCurrentInfo.text = getString(R.string.angleDebug, x.toString())
+        if (direction != null){
+            compass.rotate(direction!! + 90 - x)
+            arrow.rotate(direction!! + 90 - x)
+            //direction = locme!!.bearingTo(locsaved) //atan2(savedPos!![1] - currentPos!![1], savedPos!![0] - currentPos!![0])
+            //var distance = calculateDistanceInKilometer(currentPos!![0], currentPos!![1], savedPos!![0], savedPos!![1]) //sqrt((savedPos!![0] - currentPos!![0]).pow(2.0) + (savedPos!![1] - currentPos!![1]).pow(2.0))
+        //mainScreenBinding.tvCurrentInfo.text = getString(R.string.angleDebug, direction.toString())
+        }
+    }
+
+    val AVERAGE_RADIUS_OF_EARTH_KM = 6371000.0
+    fun calculateDistanceInKilometer(
+        userLat: Double, userLng: Double,
+        venueLat: Double, venueLng: Double
+    ): Double {
+        val latDistance = Math.toRadians(userLat - venueLat)
+        val lngDistance = Math.toRadians(userLng - venueLng)
+        val a = (Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + (Math.cos(Math.toRadians(userLat)) * Math.cos(Math.toRadians(venueLat))
+                * Math.sin(lngDistance / 2) * Math.sin(lngDistance / 2)))
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        return AVERAGE_RADIUS_OF_EARTH_KM * c
     }
 
     override fun compassValueUpdate(_degree : Float) {
         y = _degree
-        //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, _degree.toString())
-        compass.rotate(_degree + 180 - x)
+        //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, y.toString())
+        //compass.rotate(y - x)
     }
 
     override fun onResume() {

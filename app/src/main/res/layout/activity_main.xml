@@ -41,6 +41,7 @@
                 android:textSize="22sp" />
 
             <TextView
+                android:id="@+id/tvSavedInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -93,6 +94,7 @@
         app:layout_constraintTop_toBottomOf="@+id/ivCompass" />
 
     <TextView
+        android:id="@+id/tvCurrentInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="[ current location ]"

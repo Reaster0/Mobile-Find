@@ -2,20 +2,28 @@ package com.free.ra_project
 
 import android.content.Context
 import android.hardware.SensorManager
-import androidx.appcompat.app.AppCompatActivity
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
+import kotlin.math.atan2
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, LocationInterface {
 
     private lateinit var mainScreenBinding : ActivityMainBinding
-    var x = 0.0f
-    var y = 0.0f
-    var z = 0.0f
-    lateinit var arrow : Arrow
-    lateinit var compass : Compass
-    lateinit var sensorManager : SensorManager
+    private var gyroAngle = 0.0f
+    private var compassAngle = 0.0f
+    private var currentPos : Location? = null
+    private var savedPos : Location? = null
+    private var direction : Float? = null
+    private var distance : Float? = null
+    private lateinit var arrow : Arrow
+    private lateinit var compass : Compass
+    private lateinit var sensorManager : SensorManager
 
     private lateinit var location : LocationSensor
     private lateinit var gyroSensor : GyroSensor
@@ -40,23 +48,40 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
 
-    override fun locationValueUpdate(_latitude: Double, _longitude: Double, _altitude: Double) {
-        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _latitude.toString(), _longitude.toString())
+    override fun locationValueUpdate(_location: Location) {
+        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _location.latitude.toString(), _location.longitude.toString())
+        currentPos = _location
+        if (savedPos != null){
+            if (direction != null) {
+                direction = currentPos!!.bearingTo(savedPos!!)
+                if (direction!! > 360) {
+                    direction = direction!! - 360
+                }
+                distance = if (distance == null) currentPos!!.distanceTo(savedPos!!) else (currentPos!!.distanceTo(savedPos!!) + distance!!) / 2
+                arrow.colorize(distance!!.roundToInt())
+                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString())
+            }
+            else
+                direction = currentPos!!.bearingTo(savedPos!!)
+        }
     }
 
-    override fun locationValueRequested(_latitude: Double, _longitude: Double, _altitude: Double) {
-        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _latitude.toString(), _longitude.toString())
+    override fun locationValueRequested(_location : Location) {
+        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _location.latitude.toString(), _location.longitude.toString())
+        savedPos = _location
     }
     override fun gyroValueUpdate(_degree : Float) {
-        x = _degree
-        //mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.angleDebug, x.toString())
-        arrow.rotate(_degree)
+        gyroAngle = _degree
+        if (direction != null){
+            //compass.rotate(direction!! + 90 - x)
+                arrow.rotate(direction!! - compassAngle - gyroAngle)
+        }
     }
 
     override fun compassValueUpdate(_degree : Float) {
-        y = _degree
-        //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, _degree.toString())
-        compass.rotate(_degree + 180 - x)
+        compassAngle = _degree
+        //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, y.toString())
+        compass.rotate(compassAngle - 180 - gyroAngle)
     }
 
     override fun onResume() {

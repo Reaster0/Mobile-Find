@@ -4,4 +4,5 @@
     <string name="currentLocation">Latitude: %s\nLongitude: %s</string>
     <string name="gyroDebug">X: %s\nY: %s\n Z: %s</string>
     <string name="angleDebug">Angle: %s</string>
+    <string name="DistanceDebug">Distance: %s</string>
 </resources>

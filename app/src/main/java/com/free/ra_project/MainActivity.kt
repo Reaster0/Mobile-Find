@@ -7,10 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
-import kotlin.math.atan2
-import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, LocationInterface {
 
@@ -35,7 +32,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         setContentView(mainScreenBinding.root)
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         gyroSensor = GyroSensor(this, sensorManager)
-        compassSensor = CompassSensor(this, sensorManager)
+        compassSensor = CompassSensor(this, sensorManager, currentPos)
 
         compassSensor.startListen()
         gyroSensor.startListen()
@@ -70,8 +67,9 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _location.latitude.toString(), _location.longitude.toString())
         savedPos = _location
     }
+
     override fun gyroValueUpdate(_degree : Float) {
-        gyroAngle = _degree
+        gyroAngle = (_degree + gyroAngle) / 2
         if (direction != null){
             //compass.rotate(direction!! + 90 - x)
                 arrow.rotate(direction!! - compassAngle - gyroAngle)
@@ -79,8 +77,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     override fun compassValueUpdate(_degree : Float) {
-        compassAngle = _degree
-        //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, y.toString())
+        compassAngle = (_degree + compassAngle) / 2
+                //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, y.toString())
         compass.rotate(compassAngle - 180 - gyroAngle)
     }
 
@@ -88,6 +86,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         super.onResume()
         mainScreenBinding.btnRegisterLocation.setOnClickListener {
             location.getLocation()
+            mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, savedPos?.latitude.toString(), savedPos?.longitude.toString())
             Log.d("testLog", "Button clicked")
         }
         location.startLocationUpdates()

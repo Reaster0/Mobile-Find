@@ -1,19 +1,20 @@
 package com.free.ra_project
 
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
+import android.hardware.*
+import android.location.Location
 import android.util.Log
 
 interface CompassInterface {
     fun compassValueUpdate(_degree : Float)
 }
 
-class CompassSensor(_compassInterface : CompassInterface ,_sensorManager : SensorManager) : SensorEventListener {
+class CompassSensor(_compassInterface : CompassInterface, _sensorManager : SensorManager, _location : Location?) : SensorEventListener {
     private var compassInterface : CompassInterface = _compassInterface
     private val sensorManager: SensorManager = _sensorManager
-    private val compass = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)
+    private val compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION)
+    private val location : Location? = _location
+    private var time = System.currentTimeMillis()
+
 
     fun startListen() {
         sensorManager.registerListener(this, compass, SensorManager.SENSOR_DELAY_NORMAL)
@@ -35,6 +36,9 @@ class CompassSensor(_compassInterface : CompassInterface ,_sensorManager : Senso
                 orientation
             )[0].toDouble() + 360
         ) % 360).toFloat()
+        if (location != null) {
+            angle -= GeomagneticField(location.latitude.toFloat(), location.longitude.toFloat(), location.altitude.toFloat(), time).declination
+        }
         compassInterface.compassValueUpdate(angle)
     }
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {

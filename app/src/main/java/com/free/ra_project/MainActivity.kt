@@ -15,18 +15,15 @@ import kotlin.math.sqrt
 class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, LocationInterface {
 
     private lateinit var mainScreenBinding : ActivityMainBinding
-    var x = 0.0f
-    var y = 0.0f
-    var z = 0.0f
-    var currentPos : DoubleArray? = null
-    var savedPos : DoubleArray? = null
-    var locme : Location? = null
-    var locsaved : Location? = null
-    var direction : Float? = null
-    var distance : Float? = null
-    lateinit var arrow : Arrow
-    lateinit var compass : Compass
-    lateinit var sensorManager : SensorManager
+    private var gyroAngle = 0.0f
+    private var compassAngle = 0.0f
+    private var currentPos : Location? = null
+    private var savedPos : Location? = null
+    private var direction : Float? = null
+    private var distance : Float? = null
+    private lateinit var arrow : Arrow
+    private lateinit var compass : Compass
+    private lateinit var sensorManager : SensorManager
 
     private lateinit var location : LocationSensor
     private lateinit var gyroSensor : GyroSensor
@@ -51,44 +48,40 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
 
-    override fun locationValueUpdate(_latitude: Double, _longitude: Double, _altitude: Double, _location: Location) {
-        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _latitude.toString(), _longitude.toString())
-        currentPos = doubleArrayOf(_latitude, _longitude, _altitude)
-        locme = _location
-        if (locme != null && locsaved != null){
+    override fun locationValueUpdate(_location: Location) {
+        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _location.latitude.toString(), _location.longitude.toString())
+        currentPos = _location
+        if (savedPos != null){
             if (direction != null) {
-                direction = locme!!.bearingTo(locsaved!!)
+                direction = currentPos!!.bearingTo(savedPos!!)
                 if (direction!! > 360) {
                     direction = direction!! - 360
                 }
-                mainScreenBinding.tvCurrentInfo.text = getString(R.string.angleDebug, direction!!.toString() + "\n" + (direction!! - y -x).toString())
-                distance = if (distance == null) locme!!.distanceTo(locsaved!!) else (locme!!.distanceTo(locsaved!!) + distance!!) / 2
+                distance = if (distance == null) currentPos!!.distanceTo(savedPos!!) else (currentPos!!.distanceTo(savedPos!!) + distance!!) / 2
                 arrow.colorize(distance!!.roundToInt())
                 mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString())
             }
             else
-                direction = locme!!.bearingTo(locsaved!!)
+                direction = currentPos!!.bearingTo(savedPos!!)
         }
     }
 
-    override fun locationValueRequested(_latitude: Double, _longitude: Double, _altitude: Double, _location : Location) {
-        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _latitude.toString(), _longitude.toString())
-        savedPos = doubleArrayOf(_latitude, _longitude, _altitude)
-        locsaved = _location
+    override fun locationValueRequested(_location : Location) {
+        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _location.latitude.toString(), _location.longitude.toString())
+        savedPos = _location
     }
     override fun gyroValueUpdate(_degree : Float) {
-        x = _degree
-        //mainScreenBinding.tvCurrentInfo.text = getString(R.string.angleDebug, x.toString())
+        gyroAngle = _degree
         if (direction != null){
             //compass.rotate(direction!! + 90 - x)
-                arrow.rotate(direction!! - y - x)
+                arrow.rotate(direction!! - compassAngle - gyroAngle)
         }
     }
 
     override fun compassValueUpdate(_degree : Float) {
-        y = _degree
+        compassAngle = _degree
         //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, y.toString())
-        compass.rotate(y - 180 - x)
+        compass.rotate(compassAngle - 180 - gyroAngle)
     }
 
     override fun onResume() {

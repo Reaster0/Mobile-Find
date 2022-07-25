@@ -88,17 +88,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/ivCompass"
         app:srcCompat="@drawable/arrow"
-        app:tint="@color/blue1" />
+        app:tint="@color/grey2" />
 
     <TextView
         android:id="@+id/tvDiffAltitude"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:text="@string/diffAltidude"
-        android:textColor="@color/blue1"
-        android:textSize="12sp"
+        android:layout_width="49dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="5dp"
+        android:paddingTop="10dp"
+        android:text="⇵777m"
+        android:textAlignment="center"
+        android:textColor="@color/grey2"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivAltitudeArrow" />
 
     <TextView

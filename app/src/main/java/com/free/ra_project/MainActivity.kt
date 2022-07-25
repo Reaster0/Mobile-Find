@@ -41,14 +41,12 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         compassSensor.startListen()
         gyroSensor.startListen()
         arrow = Arrow(mainScreenBinding.ivDirectionArrow)
-        altitudeArrow = AltitudeArrow(mainScreenBinding.ivAltitudeArrow)
+        altitudeArrow = AltitudeArrow(mainScreenBinding.ivAltitudeArrow, mainScreenBinding.tvDiffAltitude)
         compass = Compass(mainScreenBinding.ivCompass)
 
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
-        mainScreenBinding.tvDiffAltitude.text = getString(R.string.diffAltidude, "")
 
         location = LocationSensor(this, this)
-        altitudeArrow.rotate(100)
     }
 
 
@@ -67,6 +65,11 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             }
             else
                 direction = currentPos!!.bearingTo(savedPos!!)
+
+            val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
+            val tempDiffAltitude = diffAltitude.toString()
+            altitudeArrow.rotate(diffAltitude)
+            Log.d("testLog", "Altitude difference $tempDiffAltitude")
         }
     }
 

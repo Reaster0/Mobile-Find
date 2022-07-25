@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private var direction : Float? = null
     private var distance : Float? = null
     private lateinit var arrow : Arrow
+    private lateinit var altitudeArrow : AltitudeArrow
     private lateinit var compass : Compass
     private lateinit var sensorManager : SensorManager
 
@@ -40,11 +41,14 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         compassSensor.startListen()
         gyroSensor.startListen()
         arrow = Arrow(mainScreenBinding.ivDirectionArrow)
+        altitudeArrow = AltitudeArrow(mainScreenBinding.ivAltitudeArrow)
         compass = Compass(mainScreenBinding.ivCompass)
 
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
+        mainScreenBinding.tvDiffAltitude.text = getString(R.string.diffAltidude, "")
 
         location = LocationSensor(this, this)
+        altitudeArrow.rotate(100)
     }
 
 

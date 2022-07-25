@@ -35,8 +35,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textAlignment="center"
                 android:text="@string/savedLocation"
+                android:textAlignment="center"
                 android:textColor="@color/blue1"
                 android:textSize="22sp" />
 
@@ -80,15 +80,36 @@
         app:srcCompat="@drawable/arrow"
         app:tint="@color/blue1" />
 
+    <ImageView
+        android:id="@+id/ivAltitudeArrow"
+        android:layout_width="53dp"
+        android:layout_height="32dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivCompass"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ivCompass"
+        app:srcCompat="@drawable/arrow"
+        app:tint="@color/blue1" />
+
+    <TextView
+        android:id="@+id/tvDiffAltitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:text="@string/diffAltidude"
+        android:textColor="@color/blue1"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@+id/ivAltitudeArrow" />
+
     <TextView
         android:id="@+id/tvCurrentCoordinates"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:gravity="center"
         android:text="@string/currentLocation"
         android:textColor="@color/blue1"
         android:textSize="22sp"
-        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivCompass" />

@@ -58,6 +58,7 @@
                 android:backgroundTint="@color/blue1"
                 android:text="Register Location"
                 android:textColor="@color/BG1" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

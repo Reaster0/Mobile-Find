@@ -1,11 +1,14 @@
 package com.free.ra_project
 
+import android.app.Activity
+import android.app.Instrumentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import androidx.activity.result.ActivityResult
 
 class ListLocationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +18,9 @@ class ListLocationActivity : AppCompatActivity() {
         val buttonClick = findViewById<Button>(R.id.btnBack)
         buttonClick.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            intent.putExtra("value", "button back")
+            setResult(Activity.RESULT_CANCELED, intent)
+            finish()
         }
 
 

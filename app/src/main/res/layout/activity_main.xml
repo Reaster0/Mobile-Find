@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical"
@@ -42,30 +42,12 @@
 
             <TextView
                 android:id="@+id/tvSavedInfo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:gravity="center"
                 android:text="[ saved location ]"
                 android:textColor="@color/grey2"
                 android:textSize="18sp" />
-
-            <Button
-                android:id="@+id/btnRegisterLocation"
-                android:layout_width="190dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/blue1"
-                android:text="Register Location"
-                android:textColor="@color/BG1" />
-
-            <Button
-                android:id="@+id/btnListLocations"
-                android:layout_width="190dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/blue1"
-                android:text="List locations"
-                android:textColor="@color/BG1" />
 
 
         </LinearLayout>
@@ -136,5 +118,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvCurrentCoordinates" />
+
+    <Button
+        android:id="@+id/btnListLocations"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue1"
+        android:text="List locations"
+        android:textColor="@color/BG1"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cvPositionInfo" />
+
+    <Button
+        android:id="@+id/btnRegisterLocation"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/blue1"
+        android:text="Register Location"
+        android:textColor="@color/BG1"
+        android:textSize="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cvPositionInfo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

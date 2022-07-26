@@ -5,6 +5,7 @@ import android.app.Instrumentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
@@ -23,15 +24,13 @@ class ListLocationActivity : AppCompatActivity() {
             finish()
         }
 
-
-        val mItems: Array<String> = arrayOf("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Zero")
-
-
-        val mListView = findViewById<ListView>(R.id.list_view)
-        mListView.adapter = ArrayAdapter<String>(this,
-            R.layout.list_locations,
-            R.id.text_view,
-            mItems
-        )
+        FirebaseLocation().getListLocations { locations ->
+            val mListView = findViewById<ListView>(R.id.list_view)
+            mListView.adapter = ArrayAdapter<String>(this,
+                R.layout.list_locations,
+                R.id.text_view,
+                locations.map { it.key }.toTypedArray()
+            )
+        }
     }
 }

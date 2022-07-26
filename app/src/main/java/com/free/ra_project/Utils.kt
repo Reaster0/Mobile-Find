@@ -1,6 +1,7 @@
 package com.free.ra_project
 
 import android.graphics.Color
+import android.location.Location
 import android.widget.ImageView
 import androidx.core.graphics.ColorUtils
 import kotlin.math.*

@@ -1,13 +1,8 @@
 package com.free.ra_project
 
-import android.content.Context
-import android.hardware.Sensor
+import android.hardware.*
 import android.hardware.Sensor.TYPE_ROTATION_VECTOR
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
 
 interface GyroInterface {
     fun gyroValueUpdate(_degree : Float)

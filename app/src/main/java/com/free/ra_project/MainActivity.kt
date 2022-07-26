@@ -14,6 +14,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import kotlin.math.*
+
 import kotlin.math.roundToInt
 
 
@@ -25,7 +31,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private var currentPos : Location? = null
     private var savedPos : Location? = null
     private var direction : Float? = null
-    private var distance : Float? = null
+    private var distance : Float = 0.0f
     private lateinit var arrow : Arrow
     private lateinit var altitudeArrow : AltitudeArrow
     private lateinit var compass : Compass
@@ -34,6 +40,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private lateinit var location : LocationSensor
     private lateinit var gyroSensor : GyroSensor
     private lateinit var compassSensor : CompassSensor
+    private val database = FirebaseDatabase.getInstance().getReference("location")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +48,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         setContentView(mainScreenBinding.root)
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         gyroSensor = GyroSensor(this, sensorManager)
-        compassSensor = CompassSensor(this, sensorManager)
+        compassSensor = CompassSensor(this, sensorManager, currentPos)
 
         compassSensor.startListen()
         gyroSensor.startListen()
@@ -53,47 +60,81 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
 
         location = LocationSensor(this, this)
 
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val value = dataSnapshot.getValue(LocationDto::class.java)
+                if (value != null) {
+                    val resultDto = Location("")
+                    resultDto.latitude = value.latitude
+                    resultDto.longitude = value.longitude
+                    resultDto.altitude = value.altitude
+                    resultDto.time = value.time
+                    mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, value.latitude.toString(), value.longitude.toString())
+                    savedPos = resultDto
+                }
+                else {
+                    mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                // Failed to read value
+                Log.w("MainActivity", "Failed to read value.", error.toException())
+            }
+        })
     }
 
     override fun locationValueUpdate(_location: Location) {
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _location.latitude.toString(), _location.longitude.toString())
         currentPos = _location
         if (savedPos != null){
-            if (direction != null) {
-                direction = currentPos!!.bearingTo(savedPos!!)
-                if (direction!! > 360) {
-                    direction = direction!! - 360
-                }
-                distance = if (distance == null) currentPos!!.distanceTo(savedPos!!) else (currentPos!!.distanceTo(savedPos!!) + distance!!) / 2
-                arrow.colorize(distance!!.roundToInt())
-                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString())
-            }
-            else
-                direction = currentPos!!.bearingTo(savedPos!!)
-
+            direction = bearingTo(currentPos!!.latitude, currentPos!!.longitude, savedPos!!.latitude, savedPos!!.longitude).toFloat()
+            distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
+            arrow.colorize(distance!!.roundToInt())
+            distance = ((distance * 100.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
             val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
             val tempDiffAltitude = diffAltitude.toString()
             altitudeArrow.rotate(diffAltitude)
-            Log.d("testLog", "Altitude difference $tempDiffAltitude")
+
+            if (distance < 1.5f)
+                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, "<1.5m")
+            else
+                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString() + "m")
+        }
+    }
+
+    data class LocationDto(private var source: Location) {
+        constructor() : this(Location(""))
+        val latitude : Double = source.latitude
+        val longitude : Double = source.longitude
+        val altitude : Double = source.altitude
+        val time : Long = source.time
+
+        fun toLocation() : Location {
+            return Location("").apply {
+                this.latitude = latitude
+                this.longitude = longitude
+                this.altitude = altitude
+                this.time = time
+            }
         }
     }
 
     override fun locationValueRequested(_location : Location) {
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _location.latitude.toString(), _location.longitude.toString())
         savedPos = _location
+        database.setValue(LocationDto(_location))
     }
+
     override fun gyroValueUpdate(_degree : Float) {
-        gyroAngle = _degree
+        gyroAngle = (_degree + gyroAngle) / 2
         if (direction != null){
-            //compass.rotate(direction!! + 90 - x)
-                arrow.rotate(direction!! - compassAngle - gyroAngle)
+                arrow.rotate(direction!! + compassAngle)
         }
     }
 
     override fun compassValueUpdate(_degree : Float) {
         compassAngle = _degree
-        //mainScreenBinding.tvSavedCoordinates.text = getString(R.string.angleDebug, y.toString())
-        compass.rotate(compassAngle - 180 - gyroAngle)
+        compass.rotate(compassAngle)
     }
 
     override fun onResume() {
@@ -132,17 +173,5 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         super.onDestroy()
         Log.d("testLog", "onDestroy done")
     }
-
-    // When User clicks on dialog button, call this method
-//    fun onAlertDialog(view: View) {
-//        //Instantiate builder variable
-//        val builder = AlertDialog.Builder(view.context)
-//
-//        builder.show()
-//
-//
-//
-//
-//    }
 
 }

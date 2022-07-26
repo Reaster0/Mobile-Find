@@ -134,12 +134,15 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     // When User clicks on dialog button, call this method
-    fun onAlertDialog(view: View) {
-        //Instantiate builder variable
-        val builder = AlertDialog.Builder(view.context)
-
-        builder.show()
-
-    }
+//    fun onAlertDialog(view: View) {
+//        //Instantiate builder variable
+//        val builder = AlertDialog.Builder(view.context)
+//
+//        builder.show()
+//
+//
+//
+//
+//    }
 
 }

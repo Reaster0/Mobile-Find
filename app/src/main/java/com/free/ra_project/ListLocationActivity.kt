@@ -5,6 +5,7 @@ import android.app.Instrumentation
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
@@ -23,9 +24,7 @@ class ListLocationActivity : AppCompatActivity() {
             finish()
         }
 
-
         val mItems: Array<String> = arrayOf("One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Zero")
-
 
         val mListView = findViewById<ListView>(R.id.list_view)
         mListView.adapter = ArrayAdapter<String>(this,
@@ -33,5 +32,14 @@ class ListLocationActivity : AppCompatActivity() {
             R.id.text_view,
             mItems
         )
+
+        mListView.setOnItemClickListener { parent, _, position, _ ->
+            val selectedItem = parent.getItemAtPosition(position) as String
+            Log.d("ListLocationActivity", "selected item == $selectedItem")
+            intent.putExtra("value", selectedItem.toString())
+            setResult(Activity.RESULT_CANCELED, intent)
+            finish()
+        }
+
     }
 }

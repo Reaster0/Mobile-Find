@@ -51,13 +51,23 @@
 
             <Button
                 android:id="@+id/btnRegisterLocation"
-                android:layout_width="wrap_content"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="30dp"
                 android:backgroundTint="@color/blue1"
                 android:text="Register Location"
                 android:textColor="@color/BG1" />
+
+            <Button
+                android:id="@+id/btnListLocations"
+                android:layout_width="190dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/blue1"
+                android:text="List locations"
+                android:textColor="@color/BG1" />
+
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

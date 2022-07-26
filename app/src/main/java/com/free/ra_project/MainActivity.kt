@@ -1,16 +1,21 @@
 package com.free.ra_project
 
+import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.hardware.SensorManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
-import kotlin.math.atan2
-import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlin.math.sqrt
+
 
 class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, LocationInterface {
 
@@ -47,8 +52,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
 
         location = LocationSensor(this, this)
-    }
 
+    }
 
     override fun locationValueUpdate(_location: Location) {
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _location.latitude.toString(), _location.longitude.toString())
@@ -94,9 +99,16 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     override fun onResume() {
         super.onResume()
         mainScreenBinding.btnRegisterLocation.setOnClickListener {
+            Dialog().show(supportFragmentManager, "useless text?")
             location.getLocation()
             Log.d("testLog", "Button clicked")
         }
+
+        mainScreenBinding.btnListLocations.setOnClickListener {
+            val intent = Intent(this, ListLocationActivity::class.java)
+            startActivity(intent)
+        }
+
         location.startLocationUpdates()
         gyroSensor.startListen()
         compassSensor.startListen()
@@ -120,5 +132,17 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         super.onDestroy()
         Log.d("testLog", "onDestroy done")
     }
+
+    // When User clicks on dialog button, call this method
+//    fun onAlertDialog(view: View) {
+//        //Instantiate builder variable
+//        val builder = AlertDialog.Builder(view.context)
+//
+//        builder.show()
+//
+//
+//
+//
+//    }
 
 }

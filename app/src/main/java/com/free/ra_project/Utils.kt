@@ -3,6 +3,7 @@ package com.free.ra_project
 import android.graphics.Color
 import android.widget.ImageView
 import androidx.core.graphics.ColorUtils
+import kotlin.math.*
 
 open class DirectionObjects(_image: ImageView) {
     var image: ImageView = _image
@@ -29,3 +30,24 @@ class Arrow(_image: ImageView) : DirectionObjects(_image) {
 }
 
 class Compass(_image: ImageView) : DirectionObjects(_image) {}
+
+fun bearingTo(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+    val dLon = lon2 - lon1
+    val x = sin(dLon) * cos(lat2)
+    val y = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+    return Math.toDegrees(atan2(x, y))
+}
+
+fun distanceKm(lat1: Double, lat2: Double, lon1: Double, lon2: Double, el1: Double, el2: Double): Double {
+    val R = 6371 // ~Radius of the earth
+    val latDistance = Math.toRadians(lat2 - lat1)
+    val lonDistance = Math.toRadians(lon2 - lon1)
+    val a = (sin(latDistance / 2) * sin(latDistance / 2)
+            + (cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2))
+            * sin(lonDistance / 2) * sin(lonDistance / 2)))
+    val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    var dist = R * c * 1000 // convert to meters
+    val height = el1 - el2
+    dist = dist.pow(2.0) + height.pow(2.0)
+    return sqrt(dist)
+}

@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
                     mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 // Failed to read value
                 Log.w("MainActivity", "Failed to read value.", error.toException())
@@ -73,43 +72,20 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         })
     }
 
-
-    fun distanceKm(
-        lat1: Double, lat2: Double, lon1: Double,
-        lon2: Double, el1: Double, el2: Double
-    ): Double {
-        val R = 6371 // Radius of the earth
-        val latDistance = Math.toRadians(lat2 - lat1)
-        val lonDistance = Math.toRadians(lon2 - lon1)
-        val a = (sin(latDistance / 2) * sin(latDistance / 2)
-                + (cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2))
-                * sin(lonDistance / 2) * sin(lonDistance / 2)))
-        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        var dist = R * c * 1000 // convert to meters
-        val height = el1 - el2
-        dist = dist.pow(2.0) + height.pow(2.0)
-        return sqrt(dist)
-    }
-
     override fun locationValueUpdate(_location: Location) {
 
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _location.latitude.toString(), _location.longitude.toString())
         currentPos = _location
         if (savedPos != null){
-            if (direction != null) {
-                direction = currentPos!!.bearingTo(savedPos!!)
+            direction = bearingTo(currentPos!!.latitude, currentPos!!.longitude, savedPos!!.latitude, savedPos!!.longitude).toFloat()
+            distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
+            arrow.colorize(distance!!.roundToInt())
+            distance = ((distance * 100.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
 
-                distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
-                arrow.colorize(distance!!.roundToInt())
-                distance = ((distance * 100.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
-
-                if (distance < 1.5f)           //distance = if (distance == null) currentPos!!.distanceTo(savedPos!!) else (currentPos!!.distanceTo(savedPos!!) + distance!!) / 2
-                    mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, "<1.5m")
-                else
-                    mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString() + "m")
-            }
+            if (distance < 1.5f)
+                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, "<1.5m")
             else
-                direction = currentPos!!.distanceTo(savedPos!!)
+                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString() + "m")
         }
     }
 
@@ -139,7 +115,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     override fun gyroValueUpdate(_degree : Float) {
         gyroAngle = (_degree + gyroAngle) / 2
         if (direction != null){
-                arrow.rotate(direction!! - compassAngle - gyroAngle)
+                arrow.rotate(direction!! + compassAngle)
         }
     }
 

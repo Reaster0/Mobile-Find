@@ -84,10 +84,10 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         }
     }
 
-    override fun locationValueRequested(_location : Location) {
+    override fun locationValueRequested(_location : Location, _name : String) {
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _location.latitude.toString(), _location.longitude.toString())
         savedPos = _location
-        database.updateLocation("lol", LocationDto(_location))
+        database.updateLocation(_name, LocationDto(_location))
     }
 
     override fun gyroValueUpdate(_degree : Float) {
@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         }
         else if (requestCode == saveLocationActivity && resultCode == Activity.RESULT_OK) {
             val value = data?.getStringExtra("value")
-            location.getLocation()
+            location.getLocation(value!!)
         }
     }
 

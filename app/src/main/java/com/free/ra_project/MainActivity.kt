@@ -1,5 +1,6 @@
 package com.free.ra_project
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -41,6 +42,9 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private lateinit var gyroSensor : GyroSensor
     private lateinit var compassSensor : CompassSensor
     private val database = FirebaseDatabase.getInstance().getReference("location")
+
+    private val saveLocationActivity = 0
+    private val listLocationActivity = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,20 +144,32 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     override fun onResume() {
         super.onResume()
         mainScreenBinding.btnRegisterLocation.setOnClickListener {
-            Dialog().show(supportFragmentManager, "useless text?")
-            location.getLocation()
-            Log.d("testLog", "Button clicked")
+            val intent = Intent(this, SaveLocationActivity::class.java)
+            startActivityForResult(intent, saveLocationActivity)
+//            location.getLocation()
         }
 
         mainScreenBinding.btnListLocations.setOnClickListener {
             val intent = Intent(this, ListLocationActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, listLocationActivity)
         }
 
         location.startLocationUpdates()
         gyroSensor.startListen()
         compassSensor.startListen()
         Log.d("testLog", "OnResume done")
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.d("onActivityResult", "requestCode: $requestCode resultCode: $resultCode data: ${data?.getStringExtra("value")}")
+        if (requestCode == listLocationActivity && resultCode == Activity.RESULT_OK) {
+            val value = data?.getStringExtra("value")
+        }
+        else if (requestCode == saveLocationActivity && resultCode == Activity.RESULT_OK) {
+            val value = data?.getStringExtra("value")
+            location.getLocation()
+        }
     }
 
     override fun onPause() {

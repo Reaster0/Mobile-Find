@@ -26,11 +26,20 @@ class ListLocationActivity : AppCompatActivity() {
 
         FirebaseLocation().getListLocations { locations ->
             val mListView = findViewById<ListView>(R.id.list_view)
-            mListView.adapter = ArrayAdapter<String>(this,
+            mListView.adapter = ArrayAdapter<String>(
+                this,
                 R.layout.list_locations,
                 R.id.text_view,
                 locations.map { it.key }.toTypedArray()
             )
+
+            mListView.setOnItemClickListener { parent, _, position, _ ->
+                val selectedItem = parent.getItemAtPosition(position) as String
+                Log.d("ListLocationActivity", "selected item == $selectedItem")
+                intent.putExtra("value", selectedItem.toString())
+                setResult(Activity.RESULT_CANCELED, intent)
+                finish()
+            }
         }
     }
 }

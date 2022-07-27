@@ -3,6 +3,7 @@ package com.free.ra_project
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.hardware.SensorManager
 import android.location.Location
 import android.os.Bundle
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         super.onCreate(savedInstanceState)
         mainScreenBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainScreenBinding.root)
+        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         gyroSensor = GyroSensor(this, sensorManager)
         compassSensor = CompassSensor(this, sensorManager, currentPos)
@@ -49,7 +51,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         arrow = Arrow(mainScreenBinding.ivDirectionArrow)
         altitudeArrow = AltitudeArrow(mainScreenBinding.ivAltitudeArrow, mainScreenBinding.tvDiffAltitude)
         compass = Compass(mainScreenBinding.ivCompass)
-
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
 
         location = LocationSensor(this, this)
@@ -72,10 +73,14 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
             altitudeArrow.rotate(diffAltitude)
 
-            if (distance < 1.5f)
+            if (distance < 1.5f) {
                 mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, "<1.5m")
-            else
+                arrow.transform(true)
+            }
+            else {
+                arrow.transform(false)
                 mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString() + "m")
+            }
         }
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, currentPos!!.latitude.toString(), currentPos!!.longitude.toString())
     }

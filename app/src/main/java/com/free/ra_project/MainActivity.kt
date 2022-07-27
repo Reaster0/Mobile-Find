@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
 
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 
 class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, LocationInterface {
@@ -55,8 +56,14 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     override fun locationValueUpdate(_location: Location) {
-        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, _location.latitude.toString(), _location.longitude.toString())
-        currentPos = _location
+        if (currentPos == null)
+            currentPos = _location
+        else {
+            currentPos!!.latitude = (((currentPos!!.latitude + _location.latitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
+            currentPos!!.longitude = (((currentPos!!.longitude + _location.longitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
+            currentPos!!.altitude = (((currentPos!!.altitude + _location.altitude) / 2 * 10000000000000.0).roundToLong() / 10000000000000.0).toDouble() //round to 13 decimals
+            currentPos!!.time = _location.time
+        }
         if (savedPos != null){
             direction = bearingTo(currentPos!!.latitude, currentPos!!.longitude, savedPos!!.latitude, savedPos!!.longitude).toFloat()
             distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
@@ -70,12 +77,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             else
                 mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString() + "m")
         }
-    }
-
-    override fun locationValueRequested(_location : Location, _name : String) {
-        mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, _location.latitude.toString(), _location.longitude.toString())
-        savedPos = _location
-        database.updateLocation(_name, LocationDto(_location))
+        mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, currentPos!!.latitude.toString(), currentPos!!.longitude.toString())
     }
 
     override fun gyroValueUpdate(_degree : Float) {
@@ -115,11 +117,16 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             database.getLocation(value!!){
                 savedPos = it?.toLocation()
                 mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, savedPos?.latitude.toString(), savedPos?.longitude.toString())
+                mainScreenBinding.tvLocationName.text = value
             }
         }
         else if (requestCode == saveLocationActivity && resultCode == Activity.RESULT_OK) {
             val value = data?.getStringExtra("value")
-            location.getLocation(value!!)
+            //location.getLocation(value!!)
+            mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, currentPos?.latitude.toString(), currentPos?.longitude.toString())
+            mainScreenBinding.tvLocationName.text = value
+            savedPos = currentPos
+            database.updateLocation(value!!, LocationDto(currentPos!!))
         }
     }
 

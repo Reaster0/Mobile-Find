@@ -14,7 +14,6 @@ import com.google.android.gms.tasks.OnTokenCanceledListener
 
 interface LocationInterface{
     fun locationValueUpdate(_location : Location)
-    fun locationValueRequested(_location: Location, _name : String)
 }
 
 class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatActivity) {
@@ -39,32 +38,6 @@ class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatAct
                     Log.d("testLog", location.toString())
                 }
             }
-        }
-    }
-
-    fun getLocation(_name : String) {
-        if (ActivityCompat.checkSelfPermission(
-                activity!!,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                activity!!,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(activity!!,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                Constants.REQUEST_CODE)
-            return
-        }
-        fusedLocationClient!!.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
-            override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
-            override fun isCancellationRequested() = false
-        }).addOnSuccessListener {
-            location: Location? ->
-                if (location != null) {
-                    interLocation.locationValueRequested(location, _name)
-                    Log.d("testLog", "Saved OK")
-                }
         }
     }
 

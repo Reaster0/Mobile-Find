@@ -1,25 +1,14 @@
 package com.free.ra_project
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.hardware.SensorManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import kotlin.math.*
 
 import kotlin.math.roundToInt
 
@@ -74,7 +63,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             arrow.colorize(distance!!.roundToInt())
             distance = ((distance * 100.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
             val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
-            val tempDiffAltitude = diffAltitude.toString()
             altitudeArrow.rotate(diffAltitude)
 
             if (distance < 1.5f)
@@ -107,7 +95,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         mainScreenBinding.btnRegisterLocation.setOnClickListener {
             val intent = Intent(this, SaveLocationActivity::class.java)
             startActivityForResult(intent, saveLocationActivity)
-//            location.getLocation()
         }
 
         mainScreenBinding.btnListLocations.setOnClickListener {
@@ -123,9 +110,12 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d("onActivityResult", "requestCode: $requestCode resultCode: $resultCode data: ${data?.getStringExtra("value")}")
         if (requestCode == listLocationActivity && resultCode == Activity.RESULT_OK) {
             val value = data?.getStringExtra("value")
+            database.getLocation(value!!){
+                savedPos = it?.toLocation()
+                mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, savedPos?.latitude.toString(), savedPos?.longitude.toString())
+            }
         }
         else if (requestCode == saveLocationActivity && resultCode == Activity.RESULT_OK) {
             val value = data?.getStringExtra("value")

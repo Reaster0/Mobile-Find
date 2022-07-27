@@ -14,7 +14,6 @@ class FirebaseLocation {
         println(ret)
     }
 
-
     fun getLocation(name: String, callback: (LocationDto?) -> Unit) {
         locations.child(name).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {

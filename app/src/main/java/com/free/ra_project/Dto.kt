@@ -11,10 +11,10 @@ data class LocationDto(private var source: Location) {
 
     fun toLocation() : Location {
         return Location("").apply {
-            this.latitude = latitude
-            this.longitude = longitude
-            this.altitude = altitude
-            this.time = time
+            this.latitude = this@LocationDto.latitude
+            this.longitude = this@LocationDto.longitude
+            this.altitude = this@LocationDto.altitude
+            this.time = this@LocationDto.time
         }
     }
 }

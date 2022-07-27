@@ -37,7 +37,7 @@ class ListLocationActivity : AppCompatActivity() {
                 val selectedItem = parent.getItemAtPosition(position) as String
                 Log.d("ListLocationActivity", "selected item == $selectedItem")
                 intent.putExtra("value", selectedItem.toString())
-                setResult(Activity.RESULT_CANCELED, intent)
+                setResult(Activity.RESULT_OK, intent)
                 finish()
             }
         }

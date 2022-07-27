@@ -15,6 +15,13 @@ open class DirectionObjects(_image: ImageView) {
     fun rotate(_degree: Float) {
         image.apply { rotation = _degree }
     }
+
+    fun transform(mode: Boolean) {
+        if (mode)
+            image.setImageResource(R.drawable.rond);
+        else
+            image.setImageResource(R.drawable.arrow);
+    }
 }
 
 class Arrow(_image: ImageView) : DirectionObjects(_image) {
@@ -41,8 +48,10 @@ class AltitudeArrow(_image: ImageView, _text: TextView) : DirectionObjects(_imag
             image.apply { rotation = 0f }
         else if (_altitudeDiff < -0)
             image.apply { rotation = 180f }
-        else
+        else {
+            image.setImageResource(R.drawable.rond);
             image.apply { rotation = 90f }
+        }
         diffAltitudeText.text = "⇵" + _altitudeDiff.toString() + "m"
     }
 }

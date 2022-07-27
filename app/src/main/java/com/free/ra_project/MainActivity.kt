@@ -135,6 +135,12 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         }
     }
 
+    override fun alert(state : Boolean) {
+        val myAlert = SimpleDialog(this)
+        myAlert.run(state, "Calibrate the phone!")
+        //myAlert.stop()
+    }
+
     override fun onPause() {
         super.onPause()
         location.stopLocationUpdates()

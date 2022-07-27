@@ -12,42 +12,43 @@
         android:id="@+id/et_location_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
         android:background="@color/grey1"
         android:ems="10"
         android:hint="location's name"
         android:padding="10dp"
         android:textColor="@color/blue1"
         android:textColorHint="@color/grey2"
+        app:layout_constraintBottom_toTopOf="@+id/btnSave"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="283dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="140dp"
+        android:layout_height="60dp"
         android:layout_gravity="center"
+        android:layout_marginEnd="20dp"
         android:backgroundTint="@color/blue1"
-        android:paddingTop="10dp"
         android:text="save"
         android:textColor="@color/BG1"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_location_name" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnBack"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="140dp"
+        android:layout_height="60dp"
         android:layout_gravity="center"
-        android:backgroundTint="@color/blue1"
-        android:paddingTop="10dp"
+        android:backgroundTint="@color/grey2"
         android:text="back"
         android:textColor="@color/BG1"
-        app:layout_constraintTop_toBottomOf="@+id/btnSave"
-        tools:layout_editor_absoluteX="16dp" />
+        android:layout_marginStart="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

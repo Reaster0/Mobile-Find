@@ -14,7 +14,7 @@ import com.google.android.gms.tasks.OnTokenCanceledListener
 
 interface LocationInterface{
     fun locationValueUpdate(_location : Location)
-    fun locationValueRequested(_location: Location)
+    fun locationValueRequested(_location: Location, _name : String)
 }
 
 class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatActivity) {
@@ -42,7 +42,7 @@ class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatAct
         }
     }
 
-    fun getLocation() {
+    fun getLocation(_name : String) {
         if (ActivityCompat.checkSelfPermission(
                 activity!!,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -62,7 +62,7 @@ class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatAct
         }).addOnSuccessListener {
             location: Location? ->
                 if (location != null) {
-                    interLocation.locationValueRequested(location)
+                    interLocation.locationValueRequested(location, _name)
                     Log.d("testLog", "Saved OK")
                 }
 

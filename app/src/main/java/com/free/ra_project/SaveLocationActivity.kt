@@ -26,8 +26,13 @@ class SaveLocationActivity : AppCompatActivity() {
 
         btnSave.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("value", mEditText?.text.toString())
-            setResult(Activity.RESULT_OK, intent)
+            if (mEditText?.text?.isEmpty() == true) {
+                intent.putExtra("value", "button back")
+                setResult(Activity.RESULT_CANCELED, intent)
+            } else {
+                intent.putExtra("value", mEditText?.text.toString())
+                setResult(Activity.RESULT_OK, intent)
+            }
             finish()
         }
 

@@ -65,7 +65,6 @@ class LocationSensor(_interLocation : LocationInterface, _activity: AppCompatAct
                     interLocation.locationValueRequested(location, _name)
                     Log.d("testLog", "Saved OK")
                 }
-
         }
     }
 

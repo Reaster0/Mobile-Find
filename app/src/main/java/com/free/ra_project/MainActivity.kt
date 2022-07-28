@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
 
     private val saveLocationActivity = 0
     private val listLocationActivity = 1
-    private var calibrationDialog : SimpleDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         gyroSensor.startListen()
         arrow = Arrow(mainScreenBinding.ivDirectionArrow)
         altitudeArrow = AltitudeArrow(mainScreenBinding.ivAltitudeArrow, mainScreenBinding.tvDiffAltitude)
-        compass = Compass(mainScreenBinding.ivCompass)
+        compass = Compass(mainScreenBinding.ivCompass, mainScreenBinding.tvAngle)
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
 
         location = LocationSensor(this, this)
@@ -63,7 +62,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
             arrow.colorize(distance!!.roundToInt())
             distance = ((distance * 10.0).roundToInt() / 10.0).toFloat() // round to 2 decimal places
-            val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
+            val diffAltitude : Float = (savedPos!!.altitude - currentPos!!.altitude).toFloat()
             altitudeArrow.rotate(diffAltitude)
 
             if (distance < 1.5f) {
@@ -130,11 +129,16 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     override fun alert(state : Int) {
-        mainScreenBinding.tvPrecision.text = "prec. : " + state.toString() + "/3"
-    //if (calibrationDialog == null)
-        //    calibrationDialog = SimpleDialog(this)
-        //calibrationDialog?.run(state, "Calibrate the phone!")
-        //myAlert.stop()
+        var emojiState: String
+        if (state == 0 || state == 1)
+            emojiState = "\uD83D\uDD34"
+        else if (state == 1)
+            emojiState = "\uD83D\uDFE0"
+        else if (state == 2)
+            emojiState = "\uD83D\uDFE1"
+        else
+            emojiState = "\uD83D\uDFE2"
+        mainScreenBinding.tvPrecision.text = "prec. : " + state.toString() + "/3 " + emojiState
     }
 
     override fun onPause() {

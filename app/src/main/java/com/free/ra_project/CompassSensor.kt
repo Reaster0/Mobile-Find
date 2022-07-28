@@ -6,6 +6,7 @@ import android.util.Log
 
 interface CompassInterface {
     fun compassValueUpdate(_degree : Float)
+    fun alert(state : Boolean)
 }
 
 class CompassSensor(_compassInterface : CompassInterface, _sensorManager : SensorManager, _location : Location?) : SensorEventListener {
@@ -75,6 +76,8 @@ class CompassSensor(_compassInterface : CompassInterface, _sensorManager : Senso
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        Log.d("reaster", "onAccuracyChanged")
+        if (p1 != 3)
+            compassInterface.alert(true)
+        Log.d("testLog", "Accuracy: $p1")
     }
 }

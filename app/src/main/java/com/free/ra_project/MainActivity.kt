@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     override fun alert(state : Int) {
-        mainScreenBinding.btnRegisterLocation.text = "precision: " + state.toString() + "/3"
+        mainScreenBinding.tvPrecision.text = "prec. : " + state.toString() + "/3"
     //if (calibrationDialog == null)
         //    calibrationDialog = SimpleDialog(this)
         //calibrationDialog?.run(state, "Calibrate the phone!")

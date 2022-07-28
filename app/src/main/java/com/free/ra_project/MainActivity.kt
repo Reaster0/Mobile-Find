@@ -10,9 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
-
 import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 
 class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, LocationInterface {
@@ -57,19 +55,12 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     override fun locationValueUpdate(_location: Location) {
-        if (currentPos == null)
-            currentPos = _location
-        else {
-            currentPos!!.latitude = (((currentPos!!.latitude + _location.latitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
-            currentPos!!.longitude = (((currentPos!!.longitude + _location.longitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
-            currentPos!!.altitude = (((currentPos!!.altitude + _location.altitude) / 2 * 10000000000000.0).roundToLong() / 10000000000000.0).toDouble() //round to 13 decimals
-            currentPos!!.time = _location.time
-        }
+        currentPos = _location
         if (savedPos != null){
             direction = bearingTo(currentPos!!.latitude, currentPos!!.longitude, savedPos!!.latitude, savedPos!!.longitude).toFloat()
             distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
             arrow.colorize(distance!!.roundToInt())
-            distance = ((distance * 100.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
+            distance = ((distance * 10.0).roundToInt() / 10.0).toFloat() // round to 2 decimal places
             val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
             altitudeArrow.rotate(diffAltitude)
 
@@ -101,7 +92,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         super.onResume()
         mainScreenBinding.btnRegisterLocation.setOnClickListener {
             val intent = Intent(this, SaveLocationActivity::class.java)
-            startActivityForResult(intent, saveLocationActivity)
+            if (currentPos != null)
+                startActivityForResult(intent, saveLocationActivity)
         }
 
         mainScreenBinding.btnListLocations.setOnClickListener {

@@ -44,10 +44,14 @@ class AltitudeArrow(_image: ImageView, _text: TextView) : DirectionObjects(_imag
     var diffAltitudeText: TextView = _text
 
     fun rotate(_altitudeDiff: Int) {
-        if (_altitudeDiff > 0)
+        if (_altitudeDiff > 1) {
             image.apply { rotation = 0f }
-        else if (_altitudeDiff < -0)
+            image.setImageResource(R.drawable.arrow);
+        }
+        else if (_altitudeDiff < -1) {
             image.apply { rotation = 180f }
+            image.setImageResource(R.drawable.arrow);
+        }
         else {
             image.setImageResource(R.drawable.rond);
             image.apply { rotation = 90f }

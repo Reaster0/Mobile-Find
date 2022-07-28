@@ -1,6 +1,7 @@
 package com.free.ra_project
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
 
     private val saveLocationActivity = 0
     private val listLocationActivity = 1
+    private var calibrationDialog : SimpleDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,9 +129,11 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         }
     }
 
-    override fun alert(state : Boolean) {
-        val myAlert = SimpleDialog(this)
-        myAlert.run(state, "Calibrate the phone!")
+    override fun alert(state : Int) {
+        mainScreenBinding.tvPrecision.text = "prec. : " + state.toString() + "/3"
+    //if (calibrationDialog == null)
+        //    calibrationDialog = SimpleDialog(this)
+        //calibrationDialog?.run(state, "Calibrate the phone!")
         //myAlert.stop()
     }
 

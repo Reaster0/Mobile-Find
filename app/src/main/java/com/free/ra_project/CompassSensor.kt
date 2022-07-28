@@ -6,7 +6,7 @@ import android.util.Log
 
 interface CompassInterface {
     fun compassValueUpdate(_degree : Float)
-    fun alert(state : Boolean)
+    fun alert(state : Int)
 }
 
 class CompassSensor(_compassInterface : CompassInterface, _sensorManager : SensorManager, _location : Location?) : SensorEventListener {
@@ -33,7 +33,7 @@ class CompassSensor(_compassInterface : CompassInterface, _sensorManager : Senso
     private var lastAccelCopied = false
 
     override fun onSensorChanged(p0: SensorEvent?) {
-        var alpha = 0.98f
+        val alpha = 0.98f
 
         if (p0!!.sensor.type == Sensor.TYPE_MAGNETIC_FIELD) {
             geomagnetic[0] = alpha * geomagnetic[0] + (1 - alpha) * p0.values[0]
@@ -76,8 +76,7 @@ class CompassSensor(_compassInterface : CompassInterface, _sensorManager : Senso
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        if (p1 != 3)
-            compassInterface.alert(true)
+        compassInterface.alert(p1)
         Log.d("testLog", "Accuracy: $p1")
     }
 }

@@ -2,9 +2,11 @@ package com.free.ra_project
 
 import android.app.AlertDialog
 import android.content.Context
+import java.security.AccessControlContext
+import java.security.AccessController.getContext
 
 
-class SimpleDialog(val cont: Context) {
+class SimpleDialog(val cont: Context?) {
     private var alert: AlertDialog? = null
 
     fun run(_mode: Boolean, _message: String?) {

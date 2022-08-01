@@ -1,8 +1,15 @@
 package com.free.ra_project
 
+import android.app.Activity
+import android.app.Application
 import android.hardware.*
+import android.hardware.SensorManager.SENSOR_STATUS_ACCURACY_HIGH
 import android.location.Location
 import android.util.Log
+import android.view.View
+import com.google.firebase.database.core.Context
+import java.security.AccessControlContext
+import java.security.AccessController.getContext
 
 interface CompassInterface {
     fun compassValueUpdate(_degree : Float)
@@ -76,8 +83,9 @@ class CompassSensor(_compassInterface : CompassInterface, _sensorManager : Senso
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        if (p1 != 3)
+        if (p1 != SENSOR_STATUS_ACCURACY_HIGH) {
             compassInterface.alert(true)
+        }
         Log.d("testLog", "Accuracy: $p1")
     }
 }

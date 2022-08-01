@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private var savedPos : Location? = null
     private var direction : Float? = null
     private var distance : Float = 0.0f
+    var position : MutableList<Location>? = null
+
     private lateinit var arrow : Arrow
     private lateinit var altitudeArrow : AltitudeArrow
     private lateinit var compass : Compass
@@ -57,18 +59,29 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     override fun locationValueUpdate(_location: Location) {
-        if (currentPos == null)
+        if (currentPos == null) {
             currentPos = _location
+        }
         else {
             currentPos!!.latitude = (((currentPos!!.latitude + _location.latitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
             currentPos!!.longitude = (((currentPos!!.longitude + _location.longitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
             currentPos!!.altitude = (((currentPos!!.altitude + _location.altitude) / 2 * 10000000000000.0).roundToLong() / 10000000000000.0).toDouble() //round to 13 decimals
             currentPos!!.time = _location.time
         }
+        KalmanLatLong().process(
+            currentPos!!.latitude,
+            currentPos!!.longitude,
+            currentPos!!.accuracy,
+            currentPos!!.time)
+
+        currentPos?.latitude = KalmanLatLong().get_lat()
+        currentPos?.longitude = KalmanLatLong().get_lng()
+        currentPos?.accuracy = KalmanLatLong().get_accuracy()
+
         if (savedPos != null){
             direction = bearingTo(currentPos!!.latitude, currentPos!!.longitude, savedPos!!.latitude, savedPos!!.longitude).toFloat()
             distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
-            arrow.colorize(distance!!.roundToInt())
+            arrow.colorize(distance.roundToInt())
             distance = ((distance * 100.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
             val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
             altitudeArrow.rotate(diffAltitude)
@@ -136,8 +149,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     override fun alert(state : Boolean) {
-        val myAlert = SimpleDialog(this)
-        myAlert.run(state, "Calibrate the phone!")
+            val myAlert = SimpleDialog(this)
+            myAlert.run(state, "Calibrate the phone!")
         //myAlert.stop()
     }
 

@@ -101,6 +101,10 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             val intent = Intent(this, ListLocationActivity::class.java)
             startActivityForResult(intent, listLocationActivity)
         }
+        mainScreenBinding.btnMenuBle.setOnClickListener {
+            val intent = Intent(this, MenuBleActivity::class.java)
+            startActivity(intent)
+        }
 
         location.startLocationUpdates()
         gyroSensor.startListen()

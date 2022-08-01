@@ -23,6 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="110dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arrow"
         app:tint="@color/blue1" />
@@ -124,6 +126,19 @@
         android:textSize="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnMenuBle"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="@color/blue1"
+        android:text="Menu BLE"
+        android:textColor="@color/BG1"
+        android:textSize="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnRegisterLocation"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <TextView
         android:id="@+id/tvSavedCoordinates"

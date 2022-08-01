@@ -53,6 +53,10 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
 
         location = LocationSensor(this, this)
+
+
+        val intent = Intent(this, MenuBleActivity::class.java)
+        startActivity(intent)
     }
 
     override fun locationValueUpdate(_location: Location) {

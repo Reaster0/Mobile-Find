@@ -8,7 +8,9 @@ data class BeaconDto(
     val uuid: String?,
     val major: String?,
     val minor: String?,
-)
+){
+    constructor() : this(null, null, null)
+}
 
 data class LocationDto(private var source: Location, private var beacon: Beacon?) {
     constructor() : this(Location(""), null)

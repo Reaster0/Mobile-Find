@@ -113,8 +113,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         location.startLocationUpdates()
         gyroSensor.startListen()
         compassSensor.startListen()
-        bleSensor.startRanging { bleRanging(it) }
-        bleSensor.startMonitoring{ bleMonitor(it) }
+        bleSensor.startRanging(this) { bleRanging(it) }
+        bleSensor.startMonitoring(this) { bleMonitor(it) }
         Log.d("testLog", "OnResume done")
     }
 
@@ -122,11 +122,13 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == listLocationActivity && resultCode == Activity.RESULT_OK) {
             val value = data?.getStringExtra("value")
-            database.getLocation(value!!){
+            database.getLocation(value!!){ it ->
                 savedPos = it?.toLocation()
-                //savedBeaconBle = it?.toBeaconInfo()
+                savedBeaconBle = it?.toBeaconInfo()
                 if (savedBeaconBle != null){
-                    bleSensor.newTarget(savedBeaconBle!!)
+                    bleSensor.newTarget(this, savedBeaconBle!!)
+                    bleSensor.startMonitoring(this){ bleMonitor(it) }
+                    bleSensor.startRanging(this) { bleRanging(it) }
                 }
                 mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, savedPos?.latitude.toString(), savedPos?.longitude.toString())
                 mainScreenBinding.tvLocationName.text = value
@@ -169,8 +171,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
                 arrow.transform(true)
             beaconBle = beacon
             mainScreenBinding.tvSavedInfo.text = ((beacon.distance * 100.0).toInt() / 100.0).toFloat().toString() + "m\uD83D\uDCF6" + "\n" + beacon.identifiers.get(0).toString()
-        //mainScreenBinding.tvSavedInfo.text = beacon.identifiers.toString()
-        //mainScreenBinding.tvSavedInfo.text = beacon.bluetoothName + " " + beacon.distance.toString()
         }
     }
 

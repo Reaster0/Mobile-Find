@@ -8,6 +8,8 @@ import android.content.Intent
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.getSystemService
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import org.altbeacon.beacon.*
 
@@ -34,22 +36,28 @@ class BleSensor(private val context: Context) {
         regionViewModel = BeaconManager.getInstanceForApplication(context).getRegionViewModel(region)
     }
 
-    fun startRanging(callback: (Collection<Beacon>) -> Unit) {
-        regionViewModel.rangedBeacons.observeForever(callback)
+    fun startRanging(lifeCycle: LifecycleOwner, callback: (Collection<Beacon>) -> Unit) {
+        regionViewModel.rangedBeacons.observe(lifeCycle, callback)
     }
 
-    fun startMonitoring(callback: (Int) -> Unit) {
-        regionViewModel.regionState.observeForever(callback)
+    fun stopRanging(lifeCycle: LifecycleOwner) {
+        regionViewModel.rangedBeacons.removeObservers(lifeCycle)
     }
 
-    fun newTarget(beacon : BeaconDto){
-        //regionViewModel.regionState.removeObservers()
+    fun startMonitoring( lifeCycle: LifecycleOwner, callback: (Int) -> Unit) {
+        regionViewModel.regionState.observe(lifeCycle, callback)
+    }
+
+    fun stopMonitoring(lifeCycle: LifecycleOwner) {
+        regionViewModel.regionState.removeObservers(lifeCycle)
+    }
+
+    fun newTarget(lifeCycle: LifecycleOwner, beacon : BeaconDto){
+        stopMonitoring(lifeCycle)
+        stopRanging(lifeCycle)
         region = Region("blueBoy", Identifier.parse(beacon.uuid, 16), Identifier.parse(beacon.major, 2), Identifier.parse(beacon.minor, 2))
         beaconManager.startMonitoring(region)
         beaconManager.startRangingBeacons(region)
         regionViewModel = BeaconManager.getInstanceForApplication(context).getRegionViewModel(region)
     }
-
-//    fun stopMonitoring() {
-//    }
 }

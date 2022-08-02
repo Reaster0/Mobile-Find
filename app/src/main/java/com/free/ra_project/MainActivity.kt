@@ -11,6 +11,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
+import org.altbeacon.beacon.Beacon
+import org.altbeacon.beacon.Region
 import kotlin.math.roundToInt
 
 
@@ -23,11 +25,14 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private var savedPos : Location? = null
     private var direction : Float? = null
     private var distance : Float = 0.0f
+    private var bleInRange : Boolean = false
     private lateinit var arrow : Arrow
     private lateinit var altitudeArrow : AltitudeArrow
     private lateinit var compass : Compass
     private lateinit var sensorManager : SensorManager
-
+    private lateinit var bleSensor : BleSensor
+    private var savedBeaconBle : BeaconDto? = null
+    private var beaconBle : Beacon? = null
     private lateinit var location : LocationSensor
     private lateinit var gyroSensor : GyroSensor
     private lateinit var compassSensor : CompassSensor
@@ -53,10 +58,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
 
         location = LocationSensor(this, this)
-
-
-        val intent = Intent(this, MenuBleActivity::class.java)
-        startActivity(intent)
+        bleSensor = BleSensor(this)
     }
 
     override fun locationValueUpdate(_location: Location) {
@@ -69,13 +71,15 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             val diffAltitude : Float = (savedPos!!.altitude - currentPos!!.altitude).toFloat()
             altitudeArrow.rotate(diffAltitude)
 
-            if (distance < 1.5f) {
-                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, "<1.5m")
-                arrow.transform(true)
-            }
-            else {
-                arrow.transform(false)
-                mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString() + "m")
+            if (!bleInRange){
+                if (distance < 1.5f) {
+                    mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, "<1.5m")
+                    arrow.transform(true)
+                }
+                else {
+                    arrow.transform(false)
+                    mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, distance.toString() + "m")
+                }
             }
         }
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, currentPos!!.latitude.toString(), currentPos!!.longitude.toString())
@@ -105,14 +109,12 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             val intent = Intent(this, ListLocationActivity::class.java)
             startActivityForResult(intent, listLocationActivity)
         }
-        mainScreenBinding.btnMenuBle.setOnClickListener {
-            val intent = Intent(this, MenuBleActivity::class.java)
-            startActivity(intent)
-        }
 
         location.startLocationUpdates()
         gyroSensor.startListen()
         compassSensor.startListen()
+        bleSensor.startRanging { bleRanging(it) }
+        bleSensor.startMonitoring{ bleMonitor(it) }
         Log.d("testLog", "OnResume done")
     }
 
@@ -122,6 +124,10 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             val value = data?.getStringExtra("value")
             database.getLocation(value!!){
                 savedPos = it?.toLocation()
+                //savedBeaconBle = it?.toBeaconInfo()
+                if (savedBeaconBle != null){
+                    bleSensor.newTarget(savedBeaconBle!!)
+                }
                 mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, savedPos?.latitude.toString(), savedPos?.longitude.toString())
                 mainScreenBinding.tvLocationName.text = value
             }
@@ -132,12 +138,15 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, currentPos?.latitude.toString(), currentPos?.longitude.toString())
             mainScreenBinding.tvLocationName.text = value
             savedPos = currentPos
-            database.updateLocation(value!!, LocationDto(currentPos!!))
+            if (bleInRange)
+                database.updateLocation(value!!, LocationDto(currentPos!!, beaconBle))
+            else
+                database.updateLocation(value!!, LocationDto(currentPos!!, null))
         }
     }
 
     override fun alert(state : Int) {
-        var emojiState: String
+        val emojiState: String
         if (state == 0 || state == 1)
             emojiState = "\uD83D\uDD34"
         else if (state == 1)
@@ -147,6 +156,22 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         else
             emojiState = "\uD83D\uDFE2"
         mainScreenBinding.tvPrecision.text = "prec. : " + state.toString() + "/3 " + emojiState
+    }
+
+    private fun bleMonitor(state : Int) {
+        bleInRange = state > 0
+        mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, "")
+    }
+
+    private fun bleRanging(beacons : Collection<Beacon>) {
+        for (beacon in beacons) {
+            if (beacon.distance < 10)
+                arrow.transform(true)
+            beaconBle = beacon
+            mainScreenBinding.tvSavedInfo.text = ((beacon.distance * 100.0).toInt() / 100.0).toFloat().toString() + "m\uD83D\uDCF6" + "\n" + beacon.identifiers.get(0).toString()
+        //mainScreenBinding.tvSavedInfo.text = beacon.identifiers.toString()
+        //mainScreenBinding.tvSavedInfo.text = beacon.bluetoothName + " " + beacon.distance.toString()
+        }
     }
 
     override fun onPause() {

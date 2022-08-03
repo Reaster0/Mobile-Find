@@ -55,7 +55,8 @@ class BleSensor(private val context: Context) {
     fun newTarget(lifeCycle: LifecycleOwner, beacon : BeaconDto){
         stopMonitoring(lifeCycle)
         stopRanging(lifeCycle)
-        region = Region("blueBoy", Identifier.parse(beacon.uuid, 16), Identifier.parse(beacon.major, 2), Identifier.parse(beacon.minor, 2))
+        val lol : String = java.util.UUID.randomUUID().toString()
+        region = Region(lol, Identifier.parse(beacon.uuid, 16), Identifier.parse(beacon.major, 2), Identifier.parse(beacon.minor, 2))
         beaconManager.startMonitoring(region)
         beaconManager.startRangingBeacons(region)
         regionViewModel = BeaconManager.getInstanceForApplication(context).getRegionViewModel(region)

@@ -5,11 +5,11 @@ import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.Identifier
 
 data class BeaconDto(
-    val uuid: String?,
-    val major: String?,
-    val minor: String?,
+    val uuid: String,
+    val major: String,
+    val minor: String,
 ){
-    constructor() : this(null, null, null)
+    constructor() : this("null", "null", "null")
 }
 
 data class LocationDto(private var source: Location, private var beacon: Beacon?) {
@@ -31,7 +31,7 @@ data class LocationDto(private var source: Location, private var beacon: Beacon?
         }
     }
     fun toBeaconInfo() : BeaconDto? {
-        if (beaconBle.uuid == null || beaconBle.major == null || beaconBle.minor == null) {
+        if (beaconBle.uuid == "null" || beaconBle.major == "null" || beaconBle.minor == "null") {
             return null
         }
         return beaconBle

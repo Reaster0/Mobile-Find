@@ -55,8 +55,14 @@ class BleSensor(private val context: Context) {
     fun newTarget(lifeCycle: LifecycleOwner, beacon : BeaconDto){
         stopMonitoring(lifeCycle)
         stopRanging(lifeCycle)
-        val lol : String = java.util.UUID.randomUUID().toString()
-        region = Region(lol, Identifier.parse(beacon.uuid, 16), Identifier.parse(beacon.major, 2), Identifier.parse(beacon.minor, 2))
+        BeaconManager.getInstanceForApplication(context).stopRangingBeacons(region)
+        BeaconManager.getInstanceForApplication(context).stopMonitoring(region)
+        val charPool : List<Char> = ('a'..'z') + ('A'..'Z')
+        val randomString = (0..7)
+            .map { _ -> kotlin.random.Random.nextInt(0, charPool.size) }
+            .map(charPool::get)
+            .joinToString("");
+        region = Region(randomString, Identifier.parse(beacon.uuid, 16), Identifier.parse(beacon.major, 2), Identifier.parse(beacon.minor, 2))
         beaconManager.startMonitoring(region)
         beaconManager.startRangingBeacons(region)
         regionViewModel = BeaconManager.getInstanceForApplication(context).getRegionViewModel(region)

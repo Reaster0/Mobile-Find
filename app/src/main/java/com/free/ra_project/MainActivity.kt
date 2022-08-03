@@ -130,11 +130,11 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
                     bleSensor.startMonitoring(this){ bleMonitor(it) }
                     bleSensor.startRanging(this) { bleRanging(it) }
                 }
-                else {
-                    bleSensor.stopRanging(this)
-                    bleSensor.stopMonitoring(this)
-                    bleInRange = false
-                }
+//                else {
+//                    bleSensor.stopRanging(this)
+//                    bleSensor.stopMonitoring(this)
+//                    bleInRange = false
+//                }
                 mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, savedPos?.latitude.toString(), savedPos?.longitude.toString())
                 mainScreenBinding.tvLocationName.text = value
             }
@@ -148,9 +148,9 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             savedBeaconBle = BeaconDto(beaconBle?.identifiers?.get(0).toString(), beaconBle?.identifiers?.get(1).toString(), beaconBle?.identifiers?.get(2).toString())
             if (bleInRange) {
                 database.updateLocation(value!!, LocationDto(currentPos!!, beaconBle))
-                bleSensor.newTarget(this, savedBeaconBle!!)
-                bleSensor.startMonitoring(this){ bleMonitor(it) }
-                bleSensor.startRanging(this) { bleRanging(it) }
+//                bleSensor.newTarget(this, savedBeaconBle!!)
+//                bleSensor.startMonitoring(this){ bleMonitor(it) }
+//                bleSensor.startRanging(this) { bleRanging(it) }
             }
             else
                 database.updateLocation(value!!, LocationDto(currentPos!!, null))
@@ -191,8 +191,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         location.stopLocationUpdates()
         gyroSensor.stopListen()
         compassSensor.stopListen()
-        bleSensor.stopMonitoring(this)
-        bleSensor.stopRanging(this)
+        //bleSensor.stopMonitoring(this)
+        //bleSensor.stopRanging(this)
         Log.d("testLog", "onPause done")
     }
 

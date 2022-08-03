@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.free.ra_project.databinding.ActivityMainBinding
+import kotlin.math.pow
 
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -24,7 +25,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private var savedPos : Location? = null
     private var direction : Float? = null
     private var distance : Float = 0.0f
-    var position : MutableList<Location>? = null
 
     private lateinit var arrow : Arrow
     private lateinit var altitudeArrow : AltitudeArrow
@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
 
     private val saveLocationActivity = 0
     private val listLocationActivity = 1
+    private var startKalman = false
+    private var kalmanLatitude = GPSKalmanFilter(0.5, 0.125, 1.0, 1.0)
+    private var kalmanLongitude = GPSKalmanFilter(0.5, 0.125, 1.0, 1.0)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,20 +67,26 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             currentPos = _location
         }
         else {
-            currentPos!!.latitude = (((currentPos!!.latitude + _location.latitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
-            currentPos!!.longitude = (((currentPos!!.longitude + _location.longitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
+            //currentPos!!.latitude = (((currentPos!!.latitude + _location.latitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
+            //currentPos!!.longitude = (((currentPos!!.longitude + _location.longitude) / 2 * 10000000.0).roundToInt() / 10000000.0).toDouble() //round to 7 decimals
             currentPos!!.altitude = (((currentPos!!.altitude + _location.altitude) / 2 * 10000000000000.0).roundToLong() / 10000000000000.0).toDouble() //round to 13 decimals
             currentPos!!.time = _location.time
         }
-        KalmanLatLong().process(
-            currentPos!!.latitude,
-            currentPos!!.longitude,
-            currentPos!!.accuracy,
-            currentPos!!.time)
+        val initStateLat = _location.latitude
+        val initStateLong = _location.longitude
 
-        currentPos?.latitude = KalmanLatLong().get_lat()
-        currentPos?.longitude = KalmanLatLong().get_lng()
-        currentPos?.accuracy = KalmanLatLong().get_accuracy()
+        if (startKalman) {
+            kalmanLatitude.correct(initStateLat)
+            kalmanLongitude.correct(initStateLong)
+            currentPos!!.latitude = kalmanLatitude.state.roundTo(7)
+            currentPos!!.longitude = kalmanLongitude.state.roundTo(7)
+        }
+        else {
+            kalmanLatitude.setState(initStateLat, 1.0)
+            kalmanLongitude.setState(initStateLong, 1.0)
+            startKalman = true
+        }
+
 
         if (savedPos != null){
             direction = bearingTo(currentPos!!.latitude, currentPos!!.longitude, savedPos!!.latitude, savedPos!!.longitude).toFloat()
@@ -97,6 +107,12 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         }
         mainScreenBinding.tvCurrentCoordinates.text = getString(R.string.currentLocation, currentPos!!.latitude.toString(), currentPos!!.longitude.toString())
     }
+
+    fun Double.roundTo(numFractionDigits: Int): Double {
+        val factor = 10.0.pow(numFractionDigits.toDouble())
+        return (this * factor).roundToInt() / factor
+    }
+
 
     override fun gyroValueUpdate(_degree : Float) {
         gyroAngle = (_degree + gyroAngle) / 2
@@ -173,3 +189,4 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
 }
+

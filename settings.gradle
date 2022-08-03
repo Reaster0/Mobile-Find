@@ -1,4 +1,11 @@
 pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "kotlin-multiplatform") {
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
+            }
+        }
+    }
     repositories {
         gradlePluginPortal()
         google()
@@ -14,3 +21,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "RA-Project"
 include ':app'
+
+//enableFeaturePreview('GRADLE_METADATA')

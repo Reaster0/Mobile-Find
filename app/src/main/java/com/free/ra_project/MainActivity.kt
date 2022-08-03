@@ -176,9 +176,9 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     private fun bleRanging(beacons : Collection<Beacon>) {
-        bleInRange = false
+        //bleInRange = false //the two of them is for the case location with ble + next location as a different ble (but not tested in the demo probably lol)
         for (beacon in beacons) {
-            bleInRange = true
+            //bleInRange = true
             if (beacon.distance < 10.0)
                 arrow.transform(true)
             beaconBle = beacon

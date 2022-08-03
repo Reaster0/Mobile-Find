@@ -19,8 +19,6 @@ data class LocationDto(private var source: Location, private var beacon: Beacon?
     val altitude : Double = source.altitude
     val time : Long = source.time
     val beaconBle : BeaconDto = BeaconDto(beacon?.identifiers?.get(0).toString(), beacon?.identifiers?.get(1).toString(), beacon?.identifiers?.get(2).toString())
-    //val bleBeaconIdentifier : List<Identifier>? = beaconBle?.identifiers
-    //val bleBeaconUuid : String = beaconBle?.identifiers.toString()
 
     fun toLocation() : Location {
         return Location("").apply {

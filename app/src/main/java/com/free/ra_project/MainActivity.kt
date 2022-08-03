@@ -7,6 +7,10 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.hardware.SensorManager
 import android.location.Location
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.SoundPool
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -38,8 +42,12 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private lateinit var compassSensor : CompassSensor
     private val database = FirebaseLocation()
 
+    private var soundPool: SoundPool? = null
+    private var soundID = 0
+
     private val saveLocationActivity = 0
     private val listLocationActivity = 1
+    private val listBeaconActivity = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +67,21 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
 
         location = LocationSensor(this, this)
         bleSensor = BleSensor(this)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
+            soundPool = SoundPool.Builder()
+                .setMaxStreams(1)
+                .setAudioAttributes(audioAttributes)
+                .build()
+        }
+        else {
+            soundPool = SoundPool(1, AudioManager.STREAM_MUSIC, 0)
+        }
+        soundID = soundPool!!.load(this, R.raw.beep, 1)
     }
 
     override fun locationValueUpdate(_location: Location) {
@@ -110,12 +133,18 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             startActivityForResult(intent, listLocationActivity)
         }
 
+        mainScreenBinding.btnListBeacons.setOnClickListener {
+            val intent = Intent(this, ListBeaconActivity::class.java)
+            startActivityForResult(intent, listBeaconActivity)
+        }
+
         location.startLocationUpdates()
         gyroSensor.startListen()
         compassSensor.startListen()
         bleSensor.startRanging(this) { bleRanging(it) }
         bleSensor.startMonitoring(this) { bleMonitor(it) }
         Log.d("testLog", "OnResume done")
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -146,7 +175,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             mainScreenBinding.tvLocationName.text = value
             savedPos = currentPos
             savedBeaconBle = BeaconDto(beaconBle?.identifiers?.get(0).toString(), beaconBle?.identifiers?.get(1).toString(), beaconBle?.identifiers?.get(2).toString())
-            if (bleInRange) {
+            if (bleInRange && savedBeaconBle != null) {
                 database.updateLocation(value!!, LocationDto(currentPos!!, beaconBle))
                 bleSensor.newTarget(this, savedBeaconBle!!)
                 bleSensor.startMonitoring(this){ bleMonitor(it) }
@@ -154,6 +183,19 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             }
             else
                 database.updateLocation(value!!, LocationDto(currentPos!!, null))
+        }
+        else if (requestCode == listBeaconActivity && resultCode == Activity.RESULT_OK) {
+            val value = data?.getStringExtra("value")
+            if (value != null) {
+                Log.d("BLE List Activity", value)
+            }
+            else
+                Log.d("BLE List Activity", "Data is empty.")
+            savedBeaconBle = BeaconDto(beaconBle?.identifiers?.get(0).toString(), beaconBle?.identifiers?.get(1).toString(), beaconBle?.identifiers?.get(2).toString())
+            bleSensor.newTarget(this, savedBeaconBle!!)
+            bleSensor.startMonitoring(this){ bleMonitor(it) }
+            bleSensor.startRanging(this) { bleRanging(it) }
+            mainScreenBinding.tvSavedBeacon.text = getString(R.string.savedBeacon, savedBeaconBle?.uuid.toString())
         }
     }
 
@@ -183,6 +225,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
                 arrow.transform(true)
             beaconBle = beacon
             mainScreenBinding.tvSavedInfo.text = ((beacon.distance * 100.0).toInt() / 100.0).toFloat().toString() + "m\uD83D\uDCF6" + "\nUuid:\n" + beacon.identifiers.get(0).toString()
+            soundPool?.play(soundID, 1F, 1F, 0, 1, 1F + ((beaconBle!!.distance)!!.toFloat() / 5F))
         }
     }
 

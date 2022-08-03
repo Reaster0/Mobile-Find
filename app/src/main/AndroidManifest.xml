@@ -18,6 +18,9 @@
         android:theme="@style/Theme.RAProject"
         tools:targetApi="31">
         <activity
+            android:name=".ListBeaconActivity"
+            android:exported="false" />
+        <activity
             android:name=".SaveLocationActivity"
             android:exported="false" />
         <activity

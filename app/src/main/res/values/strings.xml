@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">RA-Project</string>
     <string name="savedLocation">Lat. : %s\nLong. : %s</string>
+    <string name="savedBeacon">Beacon to save: %s</string>
     <string name="currentLocation">Lat. : %s\nLong. : %s</string>
     <string name="gyroDebug">X: %s\nY: %s\n Z: %s</string>
     <string name="angleDebug">Angle: %s</string>

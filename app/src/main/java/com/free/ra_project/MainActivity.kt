@@ -92,9 +92,9 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             direction = bearingTo(currentPos!!.latitude, currentPos!!.longitude, savedPos!!.latitude, savedPos!!.longitude).toFloat()
             distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
             arrow.colorize(distance.roundToInt())
-            distance = ((distance * 10.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
+            distance.toDouble().roundTo(2)//((distance * 10.0).roundToInt() / 10.0).toFloat() // round to 2 decimal places
             val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
-            altitudeArrow.rotate(diffAltitude)
+            altitudeArrow.rotate(diffAltitude.toFloat())
 
             if (distance < 1.5f) {
                 mainScreenBinding.tvSavedInfo.text = getString(R.string.DistanceDebug, "<1.5m")

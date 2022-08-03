@@ -12,7 +12,7 @@ import android.widget.TextView
 open class DirectionObjects(_image: ImageView) {
     var image: ImageView = _image
 
-    fun rotate(_degree: Float) {
+    open fun rotate(_degree: Float) {
         image.apply { rotation = _degree }
     }
 
@@ -43,11 +43,15 @@ class Arrow(_image: ImageView) : DirectionObjects(_image) {
 class AltitudeArrow(_image: ImageView, _text: TextView) : DirectionObjects(_image) {
     var diffAltitudeText: TextView = _text
 
-    fun rotate(_altitudeDiff: Int) {
-        if (_altitudeDiff > 0)
+    override fun rotate(_altitudeDiff: Float) {
+        if (_altitudeDiff > 1) {
             image.apply { rotation = 0f }
-        else if (_altitudeDiff < -0)
+            image.setImageResource(R.drawable.arrow);
+        }
+        else if (_altitudeDiff < -1) {
             image.apply { rotation = 180f }
+            image.setImageResource(R.drawable.arrow);
+        }
         else {
             image.setImageResource(R.drawable.rond);
             image.apply { rotation = 90f }
@@ -56,7 +60,14 @@ class AltitudeArrow(_image: ImageView, _text: TextView) : DirectionObjects(_imag
     }
 }
 
-class Compass(_image: ImageView) : DirectionObjects(_image) {}
+class Compass(_image: ImageView, _text: TextView) : DirectionObjects(_image) {
+    var angleText: TextView = _text
+
+    override fun rotate(_degree: Float) {
+        image.apply { rotation = _degree }
+        angleText.text = _degree.toInt().toString() + "°"
+    }
+}
 
 fun bearingTo(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
     val dLon = lon2 - lon1

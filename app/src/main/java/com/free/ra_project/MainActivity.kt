@@ -1,6 +1,7 @@
 package com.free.ra_project
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -25,7 +26,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     private var savedPos : Location? = null
     private var direction : Float? = null
     private var distance : Float = 0.0f
-
     private lateinit var arrow : Arrow
     private lateinit var altitudeArrow : AltitudeArrow
     private lateinit var compass : Compass
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         gyroSensor.startListen()
         arrow = Arrow(mainScreenBinding.ivDirectionArrow)
         altitudeArrow = AltitudeArrow(mainScreenBinding.ivAltitudeArrow, mainScreenBinding.tvDiffAltitude)
-        compass = Compass(mainScreenBinding.ivCompass)
+        compass = Compass(mainScreenBinding.ivCompass, mainScreenBinding.tvAngle)
         mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, "", "")
 
         location = LocationSensor(this, this)
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             direction = bearingTo(currentPos!!.latitude, currentPos!!.longitude, savedPos!!.latitude, savedPos!!.longitude).toFloat()
             distance = distanceKm(currentPos!!.latitude, savedPos!!.latitude, currentPos!!.longitude, savedPos!!.longitude, currentPos!!.altitude, savedPos!!.altitude).toFloat()
             arrow.colorize(distance.roundToInt())
-            distance = ((distance * 100.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
+            distance = ((distance * 10.0).roundToInt() / 100.0).toFloat() // round to 2 decimal places
             val diffAltitude : Int = (savedPos!!.altitude - currentPos!!.altitude).toInt()
             altitudeArrow.rotate(diffAltitude)
 
@@ -130,7 +130,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         super.onResume()
         mainScreenBinding.btnRegisterLocation.setOnClickListener {
             val intent = Intent(this, SaveLocationActivity::class.java)
-            startActivityForResult(intent, saveLocationActivity)
+            if (currentPos != null)
+                startActivityForResult(intent, saveLocationActivity)
         }
 
         mainScreenBinding.btnListLocations.setOnClickListener {
@@ -164,10 +165,17 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         }
     }
 
-    override fun alert(state : Boolean) {
-            val myAlert = SimpleDialog(this)
-            myAlert.run(state, "Calibrate the phone!")
-        //myAlert.stop()
+    override fun alert(state : Int) {
+        var emojiState: String
+        if (state == 0 || state == 1)
+            emojiState = "\uD83D\uDD34"
+        else if (state == 1)
+            emojiState = "\uD83D\uDFE0"
+        else if (state == 2)
+            emojiState = "\uD83D\uDFE1"
+        else
+            emojiState = "\uD83D\uDFE2"
+        mainScreenBinding.tvPrecision.text = "prec. : " + state.toString() + "/3 " + emojiState
     }
 
     override fun onPause() {
@@ -189,4 +197,3 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
 }
-

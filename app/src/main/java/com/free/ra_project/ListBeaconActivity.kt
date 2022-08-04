@@ -32,16 +32,12 @@ class ListBeaconActivity : AppCompatActivity() {
 //                val distanceString:String = "$uuid ($distanceLong meters)"
                 list.add(beacon)
             }
+            val adapter = BeaconListAdapter(this, list)
             val mListView = findViewById<ListView>(R.id.list_view)
-            mListView.adapter = ArrayAdapter<Beacon>(
-                this,
-                R.layout.list_beacons,
-                R.id.text_view,
-                list.toTypedArray()
-            )
+            mListView.adapter = adapter
 
             mListView.setOnItemClickListener { parent, _, position, _ ->
-                val selectedItem = parent.getItemAtPosition(position) as String
+                val selectedItem = parent.getItemAtPosition(position) as Beacon
                 Log.d("ListBeaconActivity", "selected item == $selectedItem")
                 intent.putExtra("value", selectedItem.toString())
                 setResult(Activity.RESULT_OK, intent)

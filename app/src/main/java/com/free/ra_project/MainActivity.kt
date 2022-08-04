@@ -125,6 +125,7 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
             database.getLocation(value!!){ it ->
                 savedPos = it?.toLocation()
                 savedBeaconBle = it?.toBeaconInfo()
+                bleInRange = false
                 if (savedBeaconBle != null){
                     bleSensor.newTarget(this, savedBeaconBle!!)
                     bleSensor.startMonitoring(this){ bleMonitor(it) }
@@ -133,7 +134,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
                 else {
                     bleSensor.stopRanging(this)
                     bleSensor.stopMonitoring(this)
-                    bleInRange = false
                 }
                 mainScreenBinding.tvSavedCoordinates.text = getString(R.string.savedLocation, savedPos?.latitude.toString(), savedPos?.longitude.toString())
                 mainScreenBinding.tvLocationName.text = value
@@ -176,9 +176,8 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
     }
 
     private fun bleRanging(beacons : Collection<Beacon>) {
-        //bleInRange = false //the two of them is for the case location with ble + next location as a different ble (but not tested in the demo probably lol)
         for (beacon in beacons) {
-            //bleInRange = true
+            bleInRange = true
             if (beacon.distance < 10.0)
                 arrow.transform(true)
             beaconBle = beacon
@@ -191,8 +190,6 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
         location.stopLocationUpdates()
         gyroSensor.stopListen()
         compassSensor.stopListen()
-        //bleSensor.stopMonitoring(this)
-        //bleSensor.stopRanging(this)
         Log.d("testLog", "onPause done")
     }
 

@@ -18,6 +18,7 @@
         android:ems="10"
         android:hint="location's name"
         android:padding="10dp"
+        android:maxLength="100"
         android:textColor="@color/blue1"
         android:textColorHint="@color/grey2"
         app:layout_constraintBottom_toTopOf="@+id/btnSave"

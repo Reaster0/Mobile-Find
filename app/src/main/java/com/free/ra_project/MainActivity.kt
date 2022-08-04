@@ -185,16 +185,11 @@ class MainActivity : AppCompatActivity(), GyroInterface, CompassInterface, Locat
                 database.updateLocation(value!!, LocationDto(currentPos!!, null))
         }
         else if (requestCode == listBeaconActivity && resultCode == Activity.RESULT_OK) {
-            val value = data?.getStringExtra("value")
-            if (value != null) {
-                Log.d("BLE List Activity", value)
-            }
-            else
-                Log.d("BLE List Activity", "Data is empty.")
-            savedBeaconBle = BeaconDto(beaconBle?.identifiers?.get(0).toString(), beaconBle?.identifiers?.get(1).toString(), beaconBle?.identifiers?.get(2).toString())
-            bleSensor.newTarget(this, savedBeaconBle!!)
-            bleSensor.startMonitoring(this){ bleMonitor(it) }
-            bleSensor.startRanging(this) { bleRanging(it) }
+            val value = data?.getSerializableExtra("value") as BeaconToSave
+            savedBeaconBle = BeaconDto(value.uuid, value.major, value.minor)
+//            bleSensor.newTarget(this, savedBeaconBle!!)
+//            bleSensor.startMonitoring(this){ bleMonitor(it) }
+//            bleSensor.startRanging(this) { bleRanging(it) }
             mainScreenBinding.tvSavedBeacon.text = getString(R.string.savedBeacon, savedBeaconBle?.uuid.toString())
         }
     }

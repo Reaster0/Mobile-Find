@@ -24,22 +24,23 @@ class ListBeaconActivity : AppCompatActivity() {
         }
 
         BleSensor(this).startRanging(this) { beacons ->
-            val list = mutableListOf<Beacon>()
+            val list = mutableListOf<BeaconToSave>()
             for (beacon in beacons) {
 //                val dto = BeaconDto(beacon.id1.toString(), beacon.id2.toString(), beacon.id3.toString())
 //                val distanceLong = beacon.distance
 //                val uuid = beacon.id1
 //                val distanceString:String = "$uuid ($distanceLong meters)"
-                list.add(beacon)
+                val tmpBeacon = BeaconToSave(beacon.id1.toString(), beacon.id2.toString(), beacon.id3.toString(), beacon.distance.toString())
+                list.add(tmpBeacon)
             }
             val adapter = BeaconListAdapter(this, list)
             val mListView = findViewById<ListView>(R.id.list_view)
             mListView.adapter = adapter
 
             mListView.setOnItemClickListener { parent, _, position, _ ->
-                val selectedItem = parent.getItemAtPosition(position) as Beacon
+                val selectedItem = parent.getItemAtPosition(position) as BeaconToSave
                 Log.d("ListBeaconActivity", "selected item == $selectedItem")
-                intent.putExtra("value", selectedItem.toString())
+                intent.putExtra("value", selectedItem)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }

@@ -3,6 +3,16 @@ package com.free.ra_project
 import android.location.Location
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.Identifier
+import java.io.Serializable
+
+data class BeaconToSave (
+    val uuid: String,
+    val major: String,
+    val minor: String,
+    val distance: String,
+) : Serializable {
+    constructor() : this("null", "null", "null", "null")
+}
 
 data class BeaconDto(
     val uuid: String,

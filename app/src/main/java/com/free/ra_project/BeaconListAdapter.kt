@@ -9,15 +9,15 @@ import android.view.ViewGroup
 import android.widget.TextView
 import kotlin.Int
 
-class BeaconListAdapter(context: Context, objects: List<Beacon>) :
-    ArrayAdapter<Beacon>(context, 0, objects) {
+class BeaconListAdapter(context: Context, objects: List<BeaconToSave>) :
+    ArrayAdapter<BeaconToSave>(context, 0, objects) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        var beacon : Beacon = getItem(position)!!
+        var beacon : BeaconToSave = getItem(position)!!
         var convertView: View? = convertView
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_beacons, parent, false)
         }
-        var str = """${beacon.id1} (${beacon.distance} meters)"""
+        var str = """${beacon.uuid} (${beacon.distance} meters)"""
         (convertView?.findViewById(R.id.text_view) as TextView).setText(str)
         return convertView
     }
